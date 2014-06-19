@@ -3,13 +3,13 @@ module.exports = function() {
     basePath: '../',
     frameworks: ['mocha'],
     reporters: ['progress'],
-    browsers: ['Chrome'],
+    browsers: ['/usr/bin/google-chrome'],
     autoWatch: true,
 
     // these are default values anyway
     singleRun: false,
     colors: true,
-    
+
     files : [
       //3rd Party Code
       'bower_components/angular/angular.js',
