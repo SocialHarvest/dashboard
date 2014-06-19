@@ -25,12 +25,15 @@
   ],
   "dependencies": {
     "angularjs-nvd3-directives": "~0.0.7",
-    "angular": "~1.2.18",
+    "angular": "~1.2.1",
     "angular-route": "1.2.1",
     "angular-mocks": "1.2.1",
     "angularjs-scope.safeapply": "*",
     "d3": "~3.4.8",
     "nvd3": "~1.1.15-beta",
     "components-font-awesome": "~4.1.0"
+  },
+  "resolutions": {
+    "angular": "1.2.11"
   }
 }
