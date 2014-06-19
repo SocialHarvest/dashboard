@@ -34,6 +34,7 @@
     "components-font-awesome": "~4.1.0"
   },
   "resolutions": {
-    "angular": "1.2.11"
+    "angular": "~1.2.4",
+    "d3": "~3.3.13"
   }
 }
