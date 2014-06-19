@@ -31,7 +31,6 @@
     "angularjs-scope.safeapply": "*",
     "d3": "~3.4.8",
     "nvd3": "~1.1.15-beta",
-    "influxdb-js": "git@github.com:influxdb/influxdb-js.git#~0.0.13",
     "components-font-awesome": "~4.1.0"
   }
 }
