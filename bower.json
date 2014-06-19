@@ -1,0 +1,33 @@
+{
+  "name": "social-harvest-dashboard",
+  "version": "0.0.1",
+  "homepage": "https://github.com/Homebrew/homebrew",
+  "authors": [
+    "Tom Maiaroto <tom@shift8creative.com>"
+  ],
+  "description": "A dashboard for Social Harvest, an open-source social media analytics platform.",
+  "main": "index.html",
+  "keywords": [
+    "social",
+    "harvest",
+    "social",
+    "media",
+    "analytics"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angularjs-nvd3-directives": "~0.0.7",
+    "angular": "~1.2.18",
+    "d3": "~3.4.8",
+    "nvd3": "~1.1.15-beta",
+    "influxdb-js": "git@github.com:influxdb/influxdb-js.git#~0.0.13"
+  }
+}
