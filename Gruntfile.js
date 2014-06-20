@@ -144,10 +144,20 @@ module.exports = function(grunt) {
           'app/scripts/*.js': ['coverage']
         },
         coverageReporter: {
-          type : 'html',
+          type : 'lcov',
           dir : 'coverage/'
         }
       },
+    },
+
+    coveralls: {
+      options: {
+        debug: true,
+        coverage_dir: 'coverage/',
+        //dryRun: true,
+        force: true,
+        recursive: true
+      }
     }
   });
 
@@ -162,7 +172,7 @@ module.exports = function(grunt) {
   grunt.registerTask('autotest:e2e', ['connect:testserver','shell:selenium','watch:protractor']);
 
   //coverage testing
-  grunt.registerTask('test:coverage', ['karma:unit_coverage']);
+  grunt.registerTask('test:coverage', ['karma:unit_coverage','coveralls']);
   grunt.registerTask('coverage', ['karma:unit_coverage','open:coverage','connect:coverage']);
 
   //installation-related
