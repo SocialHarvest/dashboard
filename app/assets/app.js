@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.2.19-build.256+sha.8b25ea1
+ * @license AngularJS v1.2.18
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -68,7 +68,7 @@ function minErr(module) {
       return match;
     });
 
-    message = message + '\nhttp://errors.angularjs.org/1.2.19-build.256+sha.8b25ea1/' +
+    message = message + '\nhttp://errors.angularjs.org/1.2.18/' +
       (module ? module + '/' : '') + code;
     for (i = 2; i < arguments.length; i++) {
       message = message + (i == 2 ? '?' : '&') + 'p' + (i-2) + '=' +
@@ -1953,11 +1953,11 @@ function setupModuleLoader(window) {
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
 var version = {
-  full: '1.2.19-build.256+sha.8b25ea1',    // all of these placeholder strings will be replaced by grunt's
+  full: '1.2.18',    // all of these placeholder strings will be replaced by grunt's
   major: 1,    // package task
   minor: 2,
-  dot: 19,
-  codeName: 'snapshot'
+  dot: 18,
+  codeName: 'ear-extendability'
 };
 
 
@@ -3081,16 +3081,16 @@ forEach({
  * @returns {string} hash string such that the same input will have the same hash string.
  *         The resulting string key is in 'type:hashKey' format.
  */
-function hashKey(obj, nextUidFn) {
+function hashKey(obj) {
   var objType = typeof obj,
       key;
 
-  if (objType == 'function' || (objType == 'object' && obj !== null)) {
+  if (objType == 'object' && obj !== null) {
     if (typeof (key = obj.$$hashKey) == 'function') {
       // must invoke on object to keep the right this
       key = obj.$$hashKey();
     } else if (key === undefined) {
-      key = obj.$$hashKey = (nextUidFn || nextUid)();
+      key = obj.$$hashKey = nextUid();
     }
   } else {
     key = obj;
@@ -3102,13 +3102,7 @@ function hashKey(obj, nextUidFn) {
 /**
  * HashMap which can use objects as keys
  */
-function HashMap(array, isolatedUid) {
-  if (isolatedUid) {
-    var uid = 0;
-    this.nextUid = function() {
-      return ++uid;
-    };
-  }
+function HashMap(array){
   forEach(array, this.put, this);
 }
 HashMap.prototype = {
@@ -3118,7 +3112,7 @@ HashMap.prototype = {
    * @param value value to store can be any type
    */
   put: function(key, value) {
-    this[hashKey(key, this.nextUid)] = value;
+    this[hashKey(key)] = value;
   },
 
   /**
@@ -3126,7 +3120,7 @@ HashMap.prototype = {
    * @returns {Object} the value for the key
    */
   get: function(key) {
-    return this[hashKey(key, this.nextUid)];
+    return this[hashKey(key)];
   },
 
   /**
@@ -3134,7 +3128,7 @@ HashMap.prototype = {
    * @param key
    */
   remove: function(key) {
-    var value = this[key = hashKey(key, this.nextUid)];
+    var value = this[key = hashKey(key)];
     delete this[key];
     return value;
   }
@@ -3731,7 +3725,7 @@ function createInjector(modulesToLoad) {
   var INSTANTIATING = {},
       providerSuffix = 'Provider',
       path = [],
-      loadedModules = new HashMap([], true),
+      loadedModules = new HashMap(),
       providerCache = {
         $provide: {
             provider: supportObject(provider),
@@ -6084,7 +6078,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               directiveNormalize(nodeName_(node).toLowerCase()), 'E', maxPriority, ignoreDirective);
 
           // iterate over the attributes
-          for (var attr, name, nName, ngAttrName, value, isNgAttr, nAttrs = node.attributes,
+          for (var attr, name, nName, ngAttrName, value, nAttrs = node.attributes,
                    j = 0, jj = nAttrs && nAttrs.length; j < jj; j++) {
             var attrStartName = false;
             var attrEndName = false;
@@ -6092,11 +6086,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             attr = nAttrs[j];
             if (!msie || msie >= 8 || attr.specified) {
               name = attr.name;
-              value = trim(attr.value);
-
               // support ngAttr attribute binding
               ngAttrName = directiveNormalize(name);
-              if (isNgAttr = NG_ATTR_BINDING.test(ngAttrName)) {
+              if (NG_ATTR_BINDING.test(ngAttrName)) {
                 name = snake_case(ngAttrName.substr(6), '-');
               }
 
@@ -6109,11 +6101,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
               nName = directiveNormalize(name.toLowerCase());
               attrsMap[nName] = name;
-              if (isNgAttr || !attrs.hasOwnProperty(nName)) {
-                  attrs[nName] = value;
-                  if (getBooleanAttrName(node, nName)) {
-                    attrs[nName] = true; // presence means true
-                  }
+              attrs[nName] = value = trim(attr.value);
+              if (getBooleanAttrName(node, nName)) {
+                attrs[nName] = true; // presence means true
               }
               addAttrInterpolateDirective(node, directives, value, nName);
               addDirective(directives, nName, 'A', maxPriority, ignoreDirective, attrStartName,
@@ -13742,7 +13732,7 @@ function $SceProvider() {
 
     /**
      * @ngdoc method
-     * @name $sce#parseAs
+     * @name $sce#parse
      *
      * @description
      * Converts Angular {@link guide/expression expression} into a function.  This is like {@link
@@ -19844,7 +19834,7 @@ var ngNonBindableDirective = ngDirective({ terminal: true, priority: 1000 });
  * When one person, perhaps John, views the document, "John is viewing" will be shown.
  * When three people view the document, no explicit number rule is found, so
  * an offset of 2 is taken off 3, and Angular uses 1 to decide the plural category.
- * In this case, plural category 'one' is matched and "John, Mary and one other person are viewing"
+ * In this case, plural category 'one' is matched and "John, Marry and one other person are viewing"
  * is shown.
  *
  * Note that when you specify offsets, you must provide explicit number rules for
@@ -21619,7 +21609,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
                   // rather then the element.
                   (element = optionTemplate.clone())
                       .val(option.id)
-                      .prop('selected', option.selected)
+                      .attr('selected', option.selected)
                       .text(option.label);
                 }
 
@@ -22603,685 +22593,24 @@ function ngViewFactory(   $route,   $anchorScroll,   $compile,   $controller,   
 
 
 })(window, window.angular);
-;/**
- * Copyright (C) 2012 by Matias Niemela
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-angular.module('Scope.safeApply', []).run(function($rootScope) {
+;angular.module('app.homePages', [])
 
-  $rootScope.$safeApply = function() {
-    var $scope, fn, force = false;
-    if(arguments.length == 1) {
-      var arg = arguments[0];
-      if(typeof arg == 'function') {
-        fn = arg;
-      }
-      else {
-        $scope = arg;
-      }
-    }
-    else {
-      $scope = arguments[0];
-      fn = arguments[1];
-      if(arguments.length == 3) {
-        force = !!arguments[2];
-      }
-    }
-    $scope = $scope || this;
-    fn = fn || function() { };
-    if(force || !$scope.$$phase) {
-      $scope.$apply ? $scope.$apply(fn) : $scope.apply(fn);
-    }
-    else {
-      fn();
-    }
-  };
-
-});
-;var ROUTER;
-
-(function() {
-  var lookup = {};
-  var otherwiseLookup = null;
-
-  ROUTER = {
-
-    when : function(key, url, params) {
-      lookup[key] = {
-        url : url,
-        params : params
-      };
-    },
-
-    alias : function(key1, key2) {
-      lookup[key1] = lookup[key2];
-    },
-
-    otherwise : function(params) {
-      otherwiseLookup = params;
-    },
-
-    replaceUrlParams : function(url, params) {
-      for(var k in params) {
-        var v = params[k];
-        url = url.replace(':'+k,v);
-      }
-      return url;
-    },
-
-    routeDefined : function(key) {
-      return !! this.getRoute(key);
-    },
-
-    getRoute : function(key, args) {
-      return lookup[key];
-    },
-
-    routePath : function(key, args) {
-      var url = this.getRoute(key);
-      url = url ? url.url : null;
-      if(url && args) {
-        url = this.replaceUrlParams(url, args);
-      };
-      return url;
-    },
-
-    install : function($routeProvider) {
-      for(var key in lookup) {
-        var route = lookup[key];
-        var url = route['url'];
-        var params = route['params'];
-        $routeProvider.when(url, params);
-      };
-      if(otherwiseLookup) {
-        $routeProvider.otherwise(otherwiseLookup);
-      }
-    }
-  };
-
-})();
-;var CONFIG;
-
-(function() {
-
-var appPrefix = '/';
-var templateUrlPrefix = 'templates/';
-var appVersion = 8;
-
-CONFIG = {
-
-  version : appVersion,
-
-  baseDirectory : appPrefix,
-  templateDirectory : templateUrlPrefix,
-  templateFileQuerystring : "?v=" + appVersion,
-
-  routing : {
-
-    prefix : '',
-    html5Mode : false
-
-  },
-
-  viewUrlPrefix : templateUrlPrefix + 'views/',
-  partialUrlPrefix : templateUrlPrefix + 'partials/',
-
-  templateFileSuffix : '_tpl.html',
-
-  prepareViewTemplateUrl : function(url) {
-    return this.viewUrlPrefix + url + this.templateFileSuffix + this.templateFileQuerystring;
-  }
-
-};
-
-})();
-;angular.module('App.Services', [])
-
-  .factory('$appTimer', function() {
-
-    var _delay = 500;
-    var _timer = -1;
-
-    return function(fn) {
-      clearTimeout(_timer);
-      _timer = setTimeout(function() {
-        fn(); 
-      }, _delay);
+  .factory('welcomeMessage', function() {
+    return function() {
+      return 'Welcome Home...';
     };
   })
 
-  .factory('$appStorage',function() {
-    var keyPrefix = 'yom-';
-    return {
-
-      disableCaching : function() {
-        this.disabled = true;
-      },
-
-      enableCaching : function() {
-        this.disabled = false;
-      },
-
-      version : function() {
-        return '1';
-      },
-
-      prefixKey : function(key) {
-        return keyPrefix + this.version() + '-' + key;
-      },
-
-      put : function(key, value) {
-        key = this.prefixKey(key);
-        value = JSON.stringify(value);
-        localStorage.setItem(key, value);
-      },
-
-      get : function(key) {
-        key = this.prefixKey(key);
-        var value = localStorage.getItem(key);
-        return JSON.parse(value);
-      },
-
-      erase : function(key) {
-        key = this.prefixKey(key);
-        localStorage.removeItem(key);
-      },
-
-      flush : function() {
-        while (localStorage.length) localStorage.removeItem(localStorage.key(0));
-      },
-
-      isPresent : function(key) {
-        if(!this.disabled) {
-          return !! this.get(key);
-        }
-        return false;
-      }
-
-    };
-  })
-
-  .factory('$appScope', ['$rootScope', function($rootScope) {
-
-    return {
-
-      topScope : function() {
-        return this.scope(document);
-      },
-
-      scope : function(element) {
-        return angular.element(element).scope();
-      },
-
-      rootScope : function() {
-        return $rootScope;
-      },
-
-      safeApply : function(fn, $scope) {
-        $scope = $scope || this.topScope();
-        fn = fn || function() {};
-        if($scope.$$phase) {
-          fn();
-        }
-        else {
-          $scope.$apply(function() {
-            fn();
-          });
-        }
-      }
-
-    };
-
-  }])
-
-  .factory('$appLocation', ['$location','$appScope', function($location, $scopeHelper) {
-
-    return {
-
-      gotoURL : function(url) {
-        window.location = url;
-      },
-
-      change : function(url, $scope) {
-        $scopeHelper.safeApply(function() {
-          $location.search('');
-          $location.path(url);
-        }, $scope);
-      },
-
-      replace : function(url, $scope) {
-        $scopeHelper.safeApply(function() {
-          $location.path(url).replace();
-        }, $scope);
-      }
-
-    };
-
-  }])
-
-  .factory('$appSanitize', function() {
-
-    return {
-      trim : function(str) {
-        return str.replace(/^\s+|\s+$/g, '');
-      },
-      urlEncode : function(str) {
-        return escape(str);
-      },
-      prepareForUrl : function(str) {
-        str = this.trim(str);
-        str = this.urlEncode(str);
-        return str;
-      }
-    }
-
-  })
-
-  .factory('$appYoutubeSearcher',['$appStorage','$appSanitize','$q','$http',function($storage, $sanitize, $q, $http) {
-
-    var searchToken = '{SEARCH}';
-    var callbackToken = 'JSON_CALLBACK';
-
-    var videoBaseUrl = 'https://gdata.youtube.com/feeds/api/videos/'+searchToken+'?v=2&alt=json&callback='+callbackToken;
-    var searchBaseUrl = 'https://gdata.youtube.com/feeds/api/videos?q='+searchToken+'&v=2&alt=json&callback='+callbackToken;
-
-    var keyPrefix = 'youtube-';
-    var watchedVideosKey = keyPrefix + 'watchedVideos';
-
-    return {
-
-      prefixKey : function(value) {
-        return keyPrefix + value;
-      },
-
-      resize : function(w1, h1, w2, h2) {
-        var r;
-        if(w1 > w2) {
-          r = w2 / w1;
-          w1 = w2;
-          h1 *= r;
-        }
-        if(h1 > h2) {
-          r = h2 / h1;
-          h1 = h2;
-          w1 *= r;
-        }
-        return [w1, h1];
-      },
-
-      prepareImage : function(thumb, maxWidth, maxHeight) {
-        var url = thumb.url;
-        var w = thumb.width;
-        var h = thumb.height;
-        var sizes = this.resize(w, h, maxWidth, maxHeight);
-        return {
-          url : url,
-          width : sizes[0],
-          height : sizes[1]
-        };
-      },
-
-      getWatchedVideos : function() {
-        if(!this.watchedVideos) {
-          var json = $storage.get(watchedVideosKey);
-          if(json) {
-            this.watchedVideos = JSON.parse(json);
-          }
-          else {
-            this.watchedVideos = [];
-          }
-        }
-        return this.watchedVideos;
-      },
-
-      addToWatchedVideos : function(entry) {
-        var id = entry.id;
-        var vids = this.getWatchedVideos();
-        for(var i=0;i<vids.length;i++) {
-          var v = vids[i];
-          if(v.id == id) return;
-        }
-        entry.timestamp = (new Date().getTime());
-        vids.push(entry);
-        var json = JSON.stringify(vids);
-        $storage.put(watchedVideosKey, json);
-        this.watchedVideos = vids;
-      },
-
-      filterEntry : function(entry) {
-        var IMAGE_MAX_HEIGHT = 250;
-        var IMAGE_MAX_WIDTH = 250;
-        var THUMB_MAX_HEIGHT = 80;
-        var THUMB_MAX_WIDTH = 200;
-
-        var $media      = entry.media$group;
-        var $thumbs     = $media.media$thumbnail || [];
-
-        var title       = entry.title.$t;
-        var id          = $media.yt$videoid.$t;
-        var keywords    = $media.media$keywords || '';
-        var description = $media.media$description.$t;
-        var rating      = 0;
-        if(entry.gd$rating) {
-          rating = parseInt(entry.gd$rating.average);
-        }
-
-        var width       = 560
-        var height      = 315
-        var embedUrl = 'http://www.youtube.com/embed/' + id + '?autoplay=1';
-
-        var image, thumbnails = [];
-        for(var i=0;i<$thumbs.length;i++) {
-          var t = $thumbs[i];
-          thumbnails.push(this.prepareImage(t, THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT));
-          var name = t.yt$name;
-          if(name == 'hqdefault') {
-            image = this.prepareImage(t, IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
-          }
-        }
-
-        return {
-          id : id,
-          title : title,
-          width : width,
-          height : height,
-          description : description,
-          image : image,
-          thumbnails : thumbnails,
-          rating : rating,
-          keywords : keywords,
-          embedUrl : embedUrl
-        };
-      },
-
-      filterData : function(data) {
-        var listings = [];
-        var feed = data['feed'];
-        var entries = feed['entry'];
-        for(var i=0;i<entries.length;i++) {
-          var listingData = this.filterEntry(entries[i]);
-          listings.push(listingData);
-        };
-        return listings;
-      },
-
-      findVideo : function(q, cache, onSuccess, onFailure) {
-        onSuccess = onSuccess || function() {};
-        onFailure = onFailure || function() {};
-
-        var that = this;
-        var url = videoBaseUrl.replace(searchToken, q);
-
-        var key = this.prefixKey(q);
-        if(cache && $storage.isPresent(key)) {
-          onSuccess(q, $storage.get(key));
-          return;
-        }
-
-        $http.jsonp(url).
-          success(function(data) {
-            var video = that.filterEntry(data.entry);
-            $storage.put(key, video);
-            onSuccess(q, video);
-          }).
-          error(function() {
-            $storage.put(key, null);
-            onFailure(q);
-          });
-      },
-
-      search : function(q, cache, onSuccess, onFailure) {
-        onSuccess = onSuccess || function() {};
-        onFailure = onFailure || function() {};
-
-        var that = this;
-        var url = searchBaseUrl.replace(searchToken, q);
-        var key = this.prefixKey(q);
-
-        $http.jsonp(url).
-          success(function(data) {
-            data = that.filterData(data);
-            if(cache) $storage.put(key, data);
-            onSuccess(q, data);
-          }).
-          error(function() {
-            if(cache) $storage.put(key, null);
-            onFailure(q);
-          });
-      },
-
-      query : function(q, cache, onSuccess, onFailure) {
-        onSuccess = onSuccess || function() {};
-        q = $sanitize.prepareForUrl(q);
-        if(cache) {
-          var key = this.prefixKey(q);
-          if($storage.isPresent(key)) {
-            onSuccess(q, $storage.get(key));
-            return;
-          }
-        }
-        return this.search(q, cache, onSuccess, onFailure);
-      }
-
-    };
-
-  }]);
-;angular.module('App.Directives', [])
-
-  .directive('appWelcome', function() {
-    return function($scope, element, attrs) {
-      var html = element.html();
-      element.html('Welcome: <strong>' + html + '</strong>');
-    };
-  })
-
-  .directive('appYoutubeListing', ['$appLocation', function($appLocation) {
-    return function($scope, element, attrs) {
-      element.bind('click', function() {
-        var elm = $(this);
-        var id = elm.attr('data-app-youtube-listing-id');
-        var url = ROUTER.routePath('video_path', {
-          id : id
-        });
-        $appLocation.change(url, $scope);
-      });
-    };
-  }])
-
-  .directive('appYoutubeListings', ['$appLocation', function($appLocation) {
-    var listingSelector = '.app-youtube-listing';
-    var className = 'app-youtube-listings';
-
-    return function($scope, element, attrs) {
-      element.addClass(className);
-    };
-  }]);
-;angular.module('App.Controllers', [])
-
-  .run(['$rootScope', '$appScope', function($rootScope, $appScope) {
-    $rootScope.$on("$routeChangeStart", function(event, next, current) {
-      $rootScope.onLoading();
-    });
-
-    $rootScope.onLoading = function() {
-      $rootScope.$safeApply(function() {
-        $rootScope.loading = true;
-        $rootScope.status = 'loading';
-      },this);
-    };
-
-    $rootScope.onReady = function() {
-      $rootScope.$safeApply(function() {
-        $rootScope.loading = false;
-        $rootScope.status = 'ready';
-      },this);
-    };
-  }])
-
-  .controller('AppCtrl', ['$appTimer', '$appStorage', '$location', '$scope', function($timer, $storage, $location, $scope) {
-    $scope.search = function(q, skip) {
-      var S = function() {
-        var indexPath = ROUTER.routePath('videos_path');
-        var current = $location.path();
-        if(indexPath != current) {
-          $location.path(indexPath);
-        }
-        $location.search('q',q);
-        if(!$scope.$$phase) $scope.$apply();
-      }
-      if(skip) {
-        S();
-      }
-      else {
-        $timer(function() {
-          S();
-        });
-      }
-    };
-
-    $scope.onReady();
-  }])
-
-  .controller('VideosCtrl', ['$appYoutubeSearcher', '$location', '$appStorage', '$scope', '$routeParams', function($youtube, $location, $storage, $scope, $params) {
-    $scope.current_path = '#' + $location.url();
-    if($params.q) {
-      $scope.q = $params.q;
-      $scope.search = true;
-    }
-    else {
-      $scope.search = false;
-      $scope.q = 'angularjs';
-    }
-    $youtube.query($scope.q, true, function(q, videos) {
-      $scope.videos = videos;
-      $scope.onReady();
-    });
-  }])
-
-  .controller('OtherCtrl', ['$scope', function($scope) {
-    $scope.other_status = 'success'
-  }])
-
-  .controller('WatchedVideosCtrl', ['$appYoutubeSearcher','$appStorage', '$scope', '$routeParams', function($youtube, $storage, $scope, $params) {
-    $scope.videos = $youtube.getWatchedVideos();
-    $scope.sortFn = function(entry) {
-      return entry.timestamp;
-    };
-    $scope.onReady();
-  }])
-
-  .controller('VideoCtrl', ['$appYoutubeSearcher','$compile', '$rootScope', '$routeParams', '$scope',function($youtube, $compile, $rootScope, $params, $scope) {
-    var id = $params.id;
-    $youtube.findVideo(id, true, function(id, video) {
-      $scope.video_id = id;
-      $scope.video = video;
-      $scope.stars = video.rating;
-
-      $youtube.addToWatchedVideos(video);
-      $scope.onReady();
-
-      $youtube.query(video.title, true, function(q, videos) {
-        $scope.related = videos;
-        if(!$scope.$$phase) $scope.$apply();
-      });
-    });
-  }]);
-;angular.module('App.Filters', []).
-  filter('range', function() {
-    return function(input, total) {
-      if(!input) return null;
-      total = parseInt(total);
-      for (var i=0; i<total; i++)
-        input.push(i);
-      return input;
-    };
+  .controller('HomeCtrl', function($scope, welcomeMessage) {
+    $scope.welcome_message = welcomeMessage();
   });
-;angular.module('App.Routes', [])
+;angular.module('myApp', ['ngRoute', 'app.homePages'])
 
-  .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+  .constant('TPL_PATH', '/templates')
 
-    if(CONFIG.routing.html5Mode) {
-      $locationProvider.html5Mode(true);
-    }
-    else {
-      var routingPrefix = CONFIG.routing.prefix;
-      if(routingPrefix && routingPrefix.length > 0) {
-        $locationProvider.hashPrefix(routingPrefix);
-      }
-    }
-
-    ROUTER.when('videos_path', '/videos', {
-      controller : 'VideosCtrl',
-      templateUrl : CONFIG.prepareViewTemplateUrl('videos/index')
+  .config(function($routeProvider, TPL_PATH) {
+    $routeProvider.when('/',{
+      controller : 'HomeCtrl',
+      templateUrl : TPL_PATH + '/home.html'
     });
-
-    ROUTER.when('video_path', '/videos/:id', {
-      controller : 'VideoCtrl',
-      templateUrl : CONFIG.prepareViewTemplateUrl('videos/show')
-    });
-
-    ROUTER.when('watched_videos_path', '/watched-videos', {
-      controller : 'WatchedVideosCtrl',
-      templateUrl : CONFIG.prepareViewTemplateUrl('videos/watched_videos')
-    });
-
-    ROUTER.when('other_path', '/other', {
-      controller : 'OtherCtrl',
-      templateUrl : CONFIG.prepareViewTemplateUrl('other/index')
-    });
-
-    ROUTER.alias('home_path', 'videos_path');
-
-    ROUTER.otherwise({
-      redirectTo : '/videos'
-    });
-
-    ROUTER.install($routeProvider);
-  }]).
-
-  run(['$rootScope', '$location', function($rootScope, $location) {
-    var prefix = '';
-    if(!CONFIG.routing.html5Mode) {
-      prefix = '#' + CONFIG.routing.prefix;
-    }
-    $rootScope.route = function(url, args) {
-      return prefix + ROUTER.routePath(url, args);
-    };
-
-    $rootScope.r = $rootScope.route;
-
-    $rootScope.c = function(route, value) {
-      var url = ROUTER.routePath(route);
-      if(url == $location.path()) {
-        return value;
-      }
-    };
-  }]);
-;var App = window.App = angular.module('App',
-  [
-    'ngRoute',
-    'Scope.safeApply',
-    'App.Controllers',
-    'App.Filters',
-    'App.Services',
-    'App.Directives',
-    'App.Routes'
-  ]
-);
+  });

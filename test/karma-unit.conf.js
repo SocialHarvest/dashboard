@@ -1,18 +1,19 @@
-var sharedConfig = require('./karma-shared.conf');
-
 module.exports = function(config) {
-  var conf = sharedConfig();
-
-  conf.files = conf.files.concat([
-    //extra testing code
-    'bower_components/angular-mocks/angular-mocks.js',
-
-    //mocha stuff
-    'test/mocha.conf.js',
-
-    //test files
-    './test/unit/**/*.js'
-  ]);
-
-  config.set(conf);
+  config.set({
+    files : [
+      'bower_components/angular/angular.js',
+      'bower_components/angular-route/angular-route.js',
+      'bower_components/angular-mocks/angular-mocks.js',
+      'app/scripts/homePages.js',
+      'app/scripts/app.js',
+      'test/unit/**/*.js'
+    ],
+    basePath: '../',
+    frameworks: ['jasmine'],
+    reporters: ['progress'],
+    browsers: ['Chrome'],
+    autoWatch: false,
+    singleRun: true,
+    colors: true
+  });
 };

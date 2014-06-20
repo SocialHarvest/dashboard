@@ -1,25 +1,24 @@
 module.exports = function(grunt) {
 
-  grunt.loadNpmTasks('grunt-shell');
-  grunt.loadNpmTasks('grunt-open');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-karma');
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
   grunt.initConfig({
     shell: {
-      options : {
+      options: {
         stdout: true
+      },
+      selenium: {
+        command: './selenium/start',
+        options: {
+          stdout: false,
+          async: true
+        }
+      },
+      protractor_install: {
+        command: 'node ./node_modules/protractor/bin/webdriver-manager update'
       },
       npm_install: {
         command: 'npm install'
-      },
-      bower_install: {
-        command: './node_modules/.bin/bower install'
-      },
-      font_awesome_fonts: {
-        command: 'cp -R bower_components/components-font-awesome/fonts app/font'
       }
     },
 
@@ -52,6 +51,70 @@ module.exports = function(grunt) {
       }
     },
 
+    protractor: {
+      options: {
+        keepAlive: true,
+        configFile: "./test/protractor.conf.js"
+      },
+      singlerun: {},
+      auto: {
+        keepAlive: true,
+        options: {
+          args: {
+            seleniumPort: 4444
+          }
+        }
+      }
+    },
+
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc'
+      },
+      all: [
+        'Gruntfile.js',
+        'app/scripts/{,*/}*.js'
+      ]
+    },
+
+    concat: {
+      styles: {
+        dest: './app/assets/app.css',
+        src: [
+          'app/styles/app.css',
+          //place your Stylesheet files here
+        ]
+      },
+      scripts: {
+        options: {
+          separator: ';'
+        },
+        dest: './app/assets/app.js',
+        src: [
+          'bower_components/angular/angular.js',
+          'bower_components/angular-route/angular-route.js',
+          'bower_components/angular-animate/angular-animate.js',
+          'app/scripts/homePages.js',
+          'app/scripts/app.js',
+          //place your JavaScript files here
+        ]
+      },
+    },
+
+    watch: {
+      options : {
+        livereload: 7777
+      },
+      assets: {
+        files: ['app/styles/**/*.css','app/scripts/**/*.js'],
+        tasks: ['concat']
+      },
+      protractor: {
+        files: ['app/scripts/**/*.js','test/e2e/**/*.js'],
+        tasks: ['protractor:auto']
+      }
+    },
+
     open: {
       devserver: {
         path: 'http://localhost:8888'
@@ -68,74 +131,49 @@ module.exports = function(grunt) {
         singleRun: true
       },
       unit_auto: {
-        configFile: './test/karma-unit.conf.js'
+        configFile: './test/karma-unit.conf.js',
+        autoWatch: true,
+        singleRun: false
       },
-      midway: {
-        configFile: './test/karma-midway.conf.js',
+      unit_coverage: {
+        configFile: './test/karma-unit.conf.js',
         autoWatch: false,
-        singleRun: true
-      },
-      midway_auto: {
-        configFile: './test/karma-midway.conf.js'
-      }
-    },
-
-    watch: {
-      assets: {
-        files: ['app/styles/**/*.css','app/scripts/**/*.js'],
-        tasks: ['concat']
-      }
-    },
-
-    concat: {
-      styles: {
-        dest: './app/assets/app.css',
-        src: [
-          'app/styles/reset.css',
-          'bower_components/components-font-awesome/css/font-awesome.css',
-          'bower_components/bootstrap.css/css/bootstrap.css',
-          'app/styles/app.css'
-        ]
-      },
-      scripts: {
-        options: {
-          separator: ';'
+        singleRun: true,
+        reporters: ['progress', 'coverage'],
+        preprocessors: {
+          'app/scripts/*.js': ['coverage']
         },
-        dest: './app/assets/app.js',
-        src: [
-          'bower_components/angular/angular.js',
-          'bower_components/angular-route/angular-route.js',
-          'bower_components/angularjs-scope.safeapply/src/Scope.SafeApply.js',
-          'app/scripts/lib/router.js',
-          'app/scripts/config/config.js',
-          'app/scripts/services/**/*.js',
-          'app/scripts/directives/**/*.js',
-          'app/scripts/controllers/**/*.js',
-          'app/scripts/filters/**/*.js',
-          'app/scripts/config/routes.js',
-          'app/scripts/app.js',
-        ]
-      }
+        coverageReporter: {
+          type : 'html',
+          dir : 'coverage/'
+        }
+      },
     }
   });
 
-  grunt.registerTask('test', ['connect:testserver','karma:unit','karma:midway']);
+  //single run tests
+  grunt.registerTask('test', ['jshint','test:unit', 'test:e2e']);
   grunt.registerTask('test:unit', ['karma:unit']);
-  grunt.registerTask('test:midway', ['connect:testserver','karma:midway']);
+  grunt.registerTask('test:e2e', ['connect:testserver','protractor:singlerun']);
 
-  //keeping these around for legacy use
-  grunt.registerTask('autotest', ['autotest:unit']);
-  grunt.registerTask('autotest:unit', ['connect:testserver','karma:unit_auto']);
-  grunt.registerTask('autotest:midway', ['connect:testserver','karma:midway_auto']);
+  //autotest and watch tests
+  grunt.registerTask('autotest', ['karma:unit_auto']);
+  grunt.registerTask('autotest:unit', ['karma:unit_auto']);
+  grunt.registerTask('autotest:e2e', ['connect:testserver','shell:selenium','watch:protractor']);
+
+  //coverage testing
+  grunt.registerTask('test:coverage', ['karma:unit_coverage']);
+  grunt.registerTask('coverage', ['karma:unit_coverage','open:coverage','connect:coverage']);
 
   //installation-related
-  grunt.registerTask('install', ['shell:npm_install','shell:bower_install','shell:font_awesome_fonts']);
+  grunt.registerTask('install', ['update','shell:protractor_install']);
+  grunt.registerTask('update', ['shell:npm_install', 'concat']);
 
   //defaults
   grunt.registerTask('default', ['dev']);
 
   //development
-  grunt.registerTask('dev', ['install', 'concat', 'connect:devserver', 'open:devserver', 'watch:assets']);
+  grunt.registerTask('dev', ['update', 'connect:devserver', 'open:devserver', 'watch:assets']);
 
   //server daemon
   grunt.registerTask('serve', ['connect:webserver']);

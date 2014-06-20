@@ -1,11 +1,10 @@
-var App = window.App = angular.module('App',
-  [
-    'ngRoute',
-    'Scope.safeApply',
-    'App.Controllers',
-    'App.Filters',
-    'App.Services',
-    'App.Directives',
-    'App.Routes'
-  ]
-);
+angular.module('myApp', ['ngRoute', 'app.homePages'])
+
+  .constant('TPL_PATH', '/templates')
+
+  .config(function($routeProvider, TPL_PATH) {
+    $routeProvider.when('/',{
+      controller : 'HomeCtrl',
+      templateUrl : TPL_PATH + '/home.html'
+    });
+  });
