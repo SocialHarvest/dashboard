@@ -1,5 +1,7 @@
 # Social Harvest Dashboard
 
+[![Build Status](https://drone.io/github.com/tmaiaroto/social-harvest-dashboard/status.png)](https://drone.io/github.com/tmaiaroto/social-harvest-dashboard/latest) [![Coverage Status](https://img.shields.io/coveralls/tmaiaroto/social-harvest-dashboard.svg)](https://coveralls.io/r/tmaiaroto/social-harvest-dashboard)
+
 A dashboard for Social Harvest&reg;, an open-source social media analytics platform.
 
 This application uses AngularJS, D3.js, and NVD3 to create a modular and extensible dashboard for analyzing harvested social media data stored in InfluxDB.
