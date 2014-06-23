@@ -81,8 +81,11 @@ module.exports = function(grunt) {
       styles: {
         dest: './app/assets/app.css',
         src: [
+          'app/styles/adf.css',
+          'bower_components/bootstrap/dist/css/bootstrap.min.css',
+          'bower_components/components-font-awesome/css/font-awesome.min.css',
+          'bower_components/pure/pure-min.css',
           'app/styles/app.css',
-          //place your Stylesheet files here
         ]
       },
       scripts: {
@@ -91,14 +94,54 @@ module.exports = function(grunt) {
         },
         dest: './app/assets/app.js',
         src: [
+          'bower_components/jquery/dist/jquery.js',
+          'bower_components/jquery-ui/ui/jquery.ui.core.js',
+          'bower_components/jquery-ui/ui/jquery.ui.widget.js',
+          'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
+          'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
+
           'bower_components/angular/angular.js',
+          'bower_components/angular-sanitize/angular-sanitize.js',
           'bower_components/angular-route/angular-route.js',
           'bower_components/angular-animate/angular-animate.js',
-          'app/scripts/homePages.js',
-          'app/scripts/app.js',
-          //place your JavaScript files here
+          'bower_components/showdown/compressed/showdown.js',
+          'bower_components/showdown/compressed/extensions/github.js',
+          'bower_components/showdown/compressed/extensions/twitter.js',
+          'bower_components/angular-markdown-directive/markdown.js',
+          'bower_components/angular-local-storage/angular-local-storage.js',
+          'bower_components/angular-bootstrap/ui-bootstrap.js',
+          'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+
+          'app/scripts/adf/adf.js',
+          'app/scripts/adf/structures.js',
+          'app/scripts/adf/provider.js',
+          'app/scripts/adf/sortable.js',
+          'app/scripts/adf/widget-content.js',
+          'app/scripts/adf/widget.js',
+          'app/scripts/adf/dashboard.js',
+          //
+          'app/scripts/structures.js',
+          // TODO: rename
+          'app/scripts/sample.js',
+          'app/scripts/sample-01.js',
+
+          // Widgets
+          'app/scripts/widgets/news/news.js',
+          'app/scripts/widgets/weather/weather.js',
+          'app/scripts/widgets/linklist/linklist.js',
+          'app/scripts/widgets/markdown/markdown.js',
+          'app/scripts/widgets/linklist/linklist.js',
+          'app/scripts/widgets/randommsg/randommsg.js'
         ]
       },
+    },
+
+    copy: {
+      main: {
+        files: [
+          {expand: true, flatten: true, src: ['bower_components/components-font-awesome/fonts/*'], dest: 'app/fonts/'},
+        ]
+      }
     },
 
     watch: {
@@ -183,7 +226,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['dev']);
 
   //development
-  grunt.registerTask('dev', ['update', 'connect:devserver', 'open:devserver', 'watch:assets']);
+  grunt.registerTask('dev', ['update', 'copy', 'connect:devserver', 'open:devserver', 'watch:assets']);
 
   //server daemon
   grunt.registerTask('serve', ['connect:webserver']);

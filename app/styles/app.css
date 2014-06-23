@@ -1,0 +1,84 @@
+/* Color Palette: http://www.colourlovers.com/business/trends/branding/7880/Papeterie_Haute-Ville_Logo */
+/* BLUE: 113F8C */
+/* TURQUOISE: 01A4A4 */
+/* CYAN: 00A1CB */
+/* LIME: 61AE24 */
+/* YELLOW: D0D102 */
+/* GREEN: 32742C */
+/* MAGENTA: D70060 */
+/* RED: E54028 */
+/* ORANGE: F18D05 */
+/* GRAY: 616161 */
+.panel, .panel-heading {
+  -webkit-border-radius: 0 !important;
+     -moz-border-radius: 0 !important;
+          border-radius: 0 !important;
+}
+
+.blue-bg {
+    background-color: #113F8C !important;
+}
+.turquoise-bg {
+    background-color: #01A4A4 !important;
+}
+.lime-bg {
+    background-color: #61AE24 !important;
+}
+.yellow-bg {
+    background-color: #D0D102 !important;
+}
+.green-bg {
+    background-color: #32742C !important;
+}
+.magenta-bg {
+    background-color: #D70060 !important;
+}
+.red-bg {
+    background-color: #E54028 !important;
+}
+.orange-bg {
+    background-color: #F18D05 !important;
+}
+.gray-bg {
+    background-color: #616161 !important;
+}
+.white-bg {
+    background-color: #fff !important;
+}
+.black-bg {
+    background-color: #000 !important;
+}
+
+.blue {
+    color: #113F8C !important;
+}
+.turquoise {
+    color: #01A4A4 !important;
+}
+.lime {
+    color: #61AE24 !important;
+}
+.yellow {
+    color: #D0D102 !important;
+}
+.green {
+    color: #32742C !important;
+}
+.magenta {
+    color: #D70060 !important;
+}
+.red {
+    color: #E54028 !important;
+}
+.orange {
+    color: #F18D05 !important;
+}
+.gray {
+    color: #616161 !important;
+}
+.white {
+    color: #fff !important;
+}
+.black {
+    color: #000 !important;
+}
