@@ -45286,6 +45286,10 @@ angular.module('adf')
           if (!definition.title){
             definition.title = w.title;
           }
+          // pass icon
+          if (!definition.icon){
+            definition.icon = w.icon;
+          }
 
           // pass edit mode
           $scope.editMode = $attr.editMode;
@@ -45305,6 +45309,12 @@ angular.module('adf')
 
           // pass config to scope
           $scope.config = config;
+
+          // shows/hides the collapse button
+          $scope.collapsible = (config.collapsible !== undefined) ? config.collapsible:false;
+
+          // shows/hides the fullscreen button
+          $scope.fullscreenable = (config.fullscreenable !== undefined) ? config.fullscreenable:false;
 
           // collapse
           $scope.isCollapsed = false;
@@ -45826,7 +45836,8 @@ angular.module('sample-01', ['adf', 'LocalStorageModule'])
             config: {
               location: "Hildesheim"
             },
-            title: "Weather Hildesheim"
+            title: "Weather Hildesheim",
+            icon: "fa fa-cloud"
           }, {
             type: "weather",
             config: {
@@ -45844,8 +45855,15 @@ angular.module('sample-01', ['adf', 'LocalStorageModule'])
           styleClass: "col-md-8",
           widgets: [{
             type: "randommsg",
-            config: {},
-            title: "Douglas Adams"
+            config: {
+                collapsible: true,
+                fullscreenable: true,
+                panelColorClass: {
+                    heading: "blue-bg white"
+                }
+            },
+            title: "Douglas Adams",
+            icon: "fa fa-quote-left"
         }, {
             type: "markdown",
             config: {

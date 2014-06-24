@@ -10,7 +10,8 @@
         <i class="fa fa-cog"></i>
       </a>
       <a href="" title="{{editMode ? 'disable edit mode' : 'enable edit mode'}}" ng-click="toggleEditMode()">
-        <i class="fa fa-edit"></i>
+        <i class="fa fa-edit" ng-hide="editMode"></i>
+        <i class="fa fa-save" ng-show="editMode"></i>
       </a>
     </span>
   </h1>
@@ -24,7 +25,7 @@
         </div>
       </div>
     </div>
-    
+
   </div>
 
 </div>

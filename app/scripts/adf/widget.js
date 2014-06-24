@@ -36,6 +36,10 @@ angular.module('adf')
           if (!definition.title){
             definition.title = w.title;
           }
+          // pass icon
+          if (!definition.icon){
+            definition.icon = w.icon;
+          }
 
           // pass edit mode
           $scope.editMode = $attr.editMode;
@@ -55,6 +59,12 @@ angular.module('adf')
 
           // pass config to scope
           $scope.config = config;
+
+          // shows/hides the collapse button
+          $scope.collapsible = (config.collapsible !== undefined) ? config.collapsible:false;
+
+          // shows/hides the fullscreen button
+          $scope.fullscreenable = (config.fullscreenable !== undefined) ? config.fullscreenable:false;
 
           // collapse
           $scope.isCollapsed = false;
