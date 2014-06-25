@@ -1,4 +1,4 @@
-<div class="widget panel panel-default {{config.panelColorClass.panel}}">
+<div class="widget panel panel-default {{config.panelColorClass.panel}}" ng-class="{maximized: isMaximized}">
     <div class="panel-heading {{config.panelColorClass.heading}}">
         <span class="panel-actions {{config.panelColorClass.actions}}">
             <!-- actions that don't make configuration changes, though state may be saved in local storage -->
@@ -15,7 +15,7 @@
                     <i class="fa fa-plus"></i>
                 </a>
                 <!-- full screen -->
-                <a href="" title="fullscreen widget" ng-show="fullscreenable" ng-click="">
+                <a href="" title="maximize widget" ng-show="maximizable" ng-click="isMaximized = !isMaximized">
                     <i class="fa fa-expand"></i>
                 </a>
             </div>

@@ -63,8 +63,8 @@ angular.module('adf')
           // shows/hides the collapse button
           $scope.collapsible = (config.collapsible !== undefined) ? config.collapsible:false;
 
-          // shows/hides the fullscreen button
-          $scope.fullscreenable = (config.fullscreenable !== undefined) ? config.fullscreenable:false;
+          // shows/hides the maximize button
+          $scope.maximizable = (config.maximizable !== undefined) ? config.maximizable:false;
 
           // collapse
           $scope.isCollapsed = false;

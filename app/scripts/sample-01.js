@@ -80,7 +80,7 @@ angular.module('sample-01', ['adf', 'LocalStorageModule'])
             type: "randommsg",
             config: {
                 collapsible: true,
-                fullscreenable: true,
+                maximizable: true,
                 panelColorClass: {
                     heading: "blue-bg white"
                 }
