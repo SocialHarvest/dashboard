@@ -1,0 +1,73 @@
+// Custom build of Twitter Bootstrap for Social Harvest Dashboard.
+// Mainly, the gutter and font sizes hav been reduced, the defaults were a little horsey.
+
+// Core variables and mixins
+@import "variables.less";
+@import "mixins.less";
+
+// variables.less overrides
+//== Grid system overrides
+//
+//## Define your custom responsive grid.
+
+//** Number of columns in the grid.
+@grid-columns:              12;
+//** Padding between columns. Gets divided in half for the left and right. (30px was the default)
+@grid-gutter-width:         12px;
+
+//== Typography overrides
+//
+@font-family-sans-serif:  "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-serif:       Georgia, "Times New Roman", Times, serif;
+//** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
+@font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
+@font-family-base:        @font-family-sans-serif;
+
+// (default was 14px)
+@font-size-base:          13px;
+
+// Reset
+@import "normalize.less";
+@import "print.less";
+
+// Core CSS
+@import "scaffolding.less";
+@import "type.less";
+@import "code.less";
+@import "grid.less";
+@import "tables.less";
+@import "forms.less";
+@import "buttons.less";
+
+// Components
+@import "component-animations.less";
+@import "glyphicons.less";
+@import "dropdowns.less";
+@import "button-groups.less";
+@import "input-groups.less";
+@import "navs.less";
+@import "navbar.less";
+@import "breadcrumbs.less";
+@import "pagination.less";
+@import "pager.less";
+@import "labels.less";
+@import "badges.less";
+@import "jumbotron.less";
+@import "thumbnails.less";
+@import "alerts.less";
+@import "progress-bars.less";
+@import "media.less";
+@import "list-group.less";
+@import "panels.less";
+@import "wells.less";
+@import "close.less";
+
+// Components w/ JavaScript
+@import "modals.less";
+@import "tooltip.less";
+@import "popovers.less";
+@import "carousel.less";
+
+// Utility classes
+@import "utilities.less";
+@import "responsive-utilities.less";

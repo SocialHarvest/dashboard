@@ -77,12 +77,24 @@ module.exports = function(grunt) {
       ]
     },
 
+    less: {
+      customBootstrap: {
+        options: {
+          paths: ['bower_components/bootstrap/less', 'app/styles/less'],
+        },
+        files: {
+          'app/styles/custom-bootstrap.css': 'app/styles/less/bootstrap.less'
+        }
+      }
+    },
+
     concat: {
       styles: {
         dest: './app/assets/app.css',
         src: [
           'app/styles/adf.css',
-          'bower_components/bootstrap/dist/css/bootstrap.min.css',
+          //'bower_components/bootstrap/dist/css/bootstrap.min.css',
+          'app/styles/custom-bootstrap.css',
           'bower_components/components-font-awesome/css/font-awesome.min.css',
           'bower_components/pure/pure-min.css',
           'app/styles/app.css',
@@ -220,7 +232,7 @@ module.exports = function(grunt) {
 
   //installation-related
   grunt.registerTask('install', ['update','shell:protractor_install']);
-  grunt.registerTask('update', ['shell:npm_install', 'concat']);
+  grunt.registerTask('update', ['shell:npm_install', 'less:customBootstrap', 'concat']);
 
   //defaults
   grunt.registerTask('default', ['dev']);
