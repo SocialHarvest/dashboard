@@ -24,7 +24,7 @@
 
 'use strict';
 
-angular.module('sample.widgets.linklist', ['adf.provider'])
+angular.module('socialHarvest.widgets.linklist', ['adf.provider'])
   .config(function(dashboardProvider){
     dashboardProvider
       .widget('linklist', {

@@ -28,13 +28,13 @@ module.exports = function(grunt) {
       },
       webserver: {
         options: {
-          port: 8888,
+          port: 8881,
           keepalive: true
         }
       },
       devserver: {
         options: {
-          port: 8888
+          port: 8881
         }
       },
       testserver: {
@@ -131,11 +131,11 @@ module.exports = function(grunt) {
           'app/scripts/adf/widget-content.js',
           'app/scripts/adf/widget.js',
           'app/scripts/adf/dashboard.js',
-          //
+          // Social Harvest Dashboard specific
           'app/scripts/structures.js',
-          // TODO: rename
-          'app/scripts/sample.js',
-          'app/scripts/sample-01.js',
+          'app/scripts/socialHarvest.js',
+          'app/scripts/territory.js',
+          // 'app/scripts/sample-01.js', // just left as an example dashboard for reference - not in use
 
           // Widgets
           'app/scripts/widgets/news/news.js',
@@ -172,7 +172,7 @@ module.exports = function(grunt) {
 
     open: {
       devserver: {
-        path: 'http://localhost:8888'
+        path: 'http://localhost:8881'
       },
       coverage: {
         path: 'http://localhost:5555'

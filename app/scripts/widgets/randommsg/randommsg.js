@@ -24,7 +24,7 @@
 
 'use strict';
 
-angular.module('sample.widgets.randommsg', ['adf.provider'])
+angular.module('socialHarvest.widgets.randommsg', ['adf.provider'])
   .config(function(dashboardProvider){
     dashboardProvider
       .widget('randommsg', {

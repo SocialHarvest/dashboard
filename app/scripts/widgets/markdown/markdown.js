@@ -24,7 +24,7 @@
 
 'use strict';
 
-angular.module('sample.widgets.markdown', ['adf.provider', 'btford.markdown'])
+angular.module('socialHarvest.widgets.markdown', ['adf.provider', 'btford.markdown'])
   .config(function(dashboardProvider){
     dashboardProvider
       .widget('markdown', {

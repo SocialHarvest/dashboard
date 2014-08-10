@@ -44,7 +44,7 @@ angular.module('adf')
       }
 
       return deferred.promise;
-    };
+    }
 
     function compileWidget($scope, $element) {
       var model = $scope.model;
@@ -72,7 +72,7 @@ angular.module('adf')
 
       // get resolve promises from content object
       var resolvers = {};
-      resolvers['$tpl'] = getTemplate(content);
+      resolvers.$tpl = getTemplate(content);
       if (content.resolve) {
         angular.forEach(content.resolve, function(promise, key) {
           if (angular.isString(promise)) {
@@ -88,7 +88,7 @@ angular.module('adf')
         angular.extend(locals, base);
 
         // compile & render template
-        var template = locals['$tpl'];
+        var template = locals.$tpl;
         $element.html(template);
         if (content.controller) {
           var templateCtrl = $controller(content.controller, locals);
@@ -114,7 +114,7 @@ angular.module('adf')
         model: '=',
         content: '='
       },
-      link: function($scope, $element, $attr) {
+      link: function($scope, $element) {
         compileWidget($scope, $element);
         $scope.$on('widgetConfigChanged', function(){
           compileWidget($scope, $element);

@@ -3,39 +3,39 @@
  https://raw.github.com/CyborgMaster/ui-sortable/angular1.2/src/sortable.js
  @param [ui-sortable] {object} Options to pass to $.fn.sortable() merged onto ui.config
  */
-angular.module('ui.sortable', [])
-  .value('uiSortableConfig',{})
-  .directive('uiSortable', [
-    'uiSortableConfig', '$timeout', '$log',
-    function(uiSortableConfig, $timeout, $log) {
-      return {
-        require: '?ngModel',
-        link: function(scope, element, attrs, ngModel) {
-          var savedNodes;
+ angular.module('ui.sortable', [])
+ .value('uiSortableConfig',{})
+ .directive('uiSortable', [
+  'uiSortableConfig', '$timeout', '$log',
+  function(uiSortableConfig, $timeout, $log) {
+    return {
+      require: '?ngModel',
+      link: function(scope, element, attrs, ngModel) {
+        var savedNodes;
 
-          function combineCallbacks(first,second){
-            if(second && (typeof second === "function")) {
-              return function(e, ui) {
-                first(e, ui);
-                second(e, ui);
-              };
-            }
-            return first;
+        function combineCallbacks(first,second){
+          if(second && (typeof second === "function")) {
+            return function(e, ui) {
+              first(e, ui);
+              second(e, ui);
+            };
           }
+          return first;
+        }
 
-          var opts = {};
+        var opts = {};
 
-          var callbacks = {
-            receive: null,
-            remove:null,
-            start:null,
-            stop:null,
-            update:null
-          };
+        var callbacks = {
+          receive: null,
+          remove:null,
+          start:null,
+          stop:null,
+          update:null
+        };
 
-          angular.extend(opts, uiSortableConfig);
+        angular.extend(opts, uiSortableConfig);
 
-          if (ngModel) {
+        if (ngModel) {
 
             // When we add or remove elements, we need the sortable to 'refresh'
             // so it can find the new/removed elements.
@@ -52,25 +52,27 @@ angular.module('ui.sortable', [])
             };
 
             callbacks.activate = function(e, ui) {
-              // We need to make a copy of the current element's contents so
-              // we can restore it after sortable has messed it up.
-              // This is inside activate (instead of start) in order to save
-              // both lists when dragging between connected lists.
-              savedNodes = element.contents();
+              if(e && ui) {
+                // We need to make a copy of the current element's contents so
+                // we can restore it after sortable has messed it up.
+                // This is inside activate (instead of start) in order to save
+                // both lists when dragging between connected lists.
+                savedNodes = element.contents();
 
-              // If this list has a placeholder (the connected lists won't),
-              // don't inlcude it in saved nodes.
-              var placeholder = element.sortable('option','placeholder');
+                // If this list has a placeholder (the connected lists won't),
+                // don't inlcude it in saved nodes.
+                var placeholder = element.sortable('option','placeholder');
 
-              // placeholder.element will be a function if the placeholder, has
-              // been created (placeholder will be an object).  If it hasn't
-              // been created, either placeholder will be false if no
-              // placeholder class was given or placeholder.element will be
-              // undefined if a class was given (placeholder will be a string)
-              if (placeholder && placeholder.element) {
-                savedNodes = savedNodes.not(element.find(
-                  "." + placeholder.element()
+                // placeholder.element will be a function if the placeholder, has
+                // been created (placeholder will be an object).  If it hasn't
+                // been created, either placeholder will be false if no
+                // placeholder class was given or placeholder.element will be
+                // undefined if a class was given (placeholder will be a string)
+                if (placeholder && placeholder.element) {
+                  savedNodes = savedNodes.not(element.find(
+                    "." + placeholder.element()
                     .attr('class').split(/\s+/).join('.')));
+                }
               }
             };
 
@@ -93,7 +95,7 @@ angular.module('ui.sortable', [])
               // the start and stop of repeat sections and sortable doesn't
               // respect their order (even if we cancel, the order of the
               // comments are still messed up).
-              savedNodes.detach().appendTo(element);
+savedNodes.detach().appendTo(element);
 
               // If received is true (an item was dropped in from another list)
               // then we add the new item to this list otherwise wait until the
@@ -102,7 +104,7 @@ angular.module('ui.sortable', [])
               if(ui.item.sortable.received) {
                 scope.$apply(function () {
                   ngModel.$modelValue.splice(ui.item.sortable.dropindex, 0,
-                                             ui.item.sortable.moved);
+                   ui.item.sortable.moved);
                 });
               }
             };
@@ -135,7 +137,7 @@ angular.module('ui.sortable', [])
               });
             };
 
-            scope.$watch(attrs.uiSortable, function(newVal, oldVal) {
+            scope.$watch(attrs.uiSortable, function(newVal) {
               angular.forEach(newVal, function(value, key) {
                 if(callbacks[key]) {
                   // wrap the callback
@@ -158,4 +160,4 @@ angular.module('ui.sortable', [])
         }
       };
     }
-  ]);
+    ]);

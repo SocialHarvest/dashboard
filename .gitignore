@@ -6,3 +6,9 @@ libpeerconnection.log
 .agignore
 /selenium
 /coverage
+/app/styles/custom-bootstrap.css
+/app/fonts/fontawesome-*
+/app/fonts/FontAwesome.otf
+social-harvest-dashboard.sublime-project
+social-harvest-dashboard.sublime-workspace
+social-harvest-conf.json

@@ -44819,12 +44819,11 @@ angular.module('adf.provider', [])
     var widgets = {};
     var structures = {};
     var messageTemplate = '<div class="alert alert-danger">{}</div>';
-    var loadingTemplate = '\
-      <div class="progress progress-striped active">\n\
-        <div class="progress-bar" role="progressbar" style="width: 100%">\n\
-          <span class="sr-only">loading ...</span>\n\
-        </div>\n\
-      </div>';
+    var loadingTemplate = '<div class="progress progress-striped active">\n' +
+        '<div class="progress-bar" role="progressbar" style="width: 100%">\n' +
+          '<span class="sr-only">loading ...</span>\n' +
+        '</div>\n' +
+      '</div>';
 
    /**
     * @ngdoc method
@@ -44873,7 +44872,7 @@ angular.module('adf.provider', [])
     * @returns {Object} self
     */
     this.widget = function(name, widget){
-      var w = angular.extend({reload: false}, widget)
+      var w = angular.extend({reload: false}, widget);
       if ( w.edit ){
         var edit = {reload: true};
         angular.extend(edit, w.edit);
@@ -44966,39 +44965,39 @@ angular.module('adf.provider', [])
  https://raw.github.com/CyborgMaster/ui-sortable/angular1.2/src/sortable.js
  @param [ui-sortable] {object} Options to pass to $.fn.sortable() merged onto ui.config
  */
-angular.module('ui.sortable', [])
-  .value('uiSortableConfig',{})
-  .directive('uiSortable', [
-    'uiSortableConfig', '$timeout', '$log',
-    function(uiSortableConfig, $timeout, $log) {
-      return {
-        require: '?ngModel',
-        link: function(scope, element, attrs, ngModel) {
-          var savedNodes;
+ angular.module('ui.sortable', [])
+ .value('uiSortableConfig',{})
+ .directive('uiSortable', [
+  'uiSortableConfig', '$timeout', '$log',
+  function(uiSortableConfig, $timeout, $log) {
+    return {
+      require: '?ngModel',
+      link: function(scope, element, attrs, ngModel) {
+        var savedNodes;
 
-          function combineCallbacks(first,second){
-            if(second && (typeof second === "function")) {
-              return function(e, ui) {
-                first(e, ui);
-                second(e, ui);
-              };
-            }
-            return first;
+        function combineCallbacks(first,second){
+          if(second && (typeof second === "function")) {
+            return function(e, ui) {
+              first(e, ui);
+              second(e, ui);
+            };
           }
+          return first;
+        }
 
-          var opts = {};
+        var opts = {};
 
-          var callbacks = {
-            receive: null,
-            remove:null,
-            start:null,
-            stop:null,
-            update:null
-          };
+        var callbacks = {
+          receive: null,
+          remove:null,
+          start:null,
+          stop:null,
+          update:null
+        };
 
-          angular.extend(opts, uiSortableConfig);
+        angular.extend(opts, uiSortableConfig);
 
-          if (ngModel) {
+        if (ngModel) {
 
             // When we add or remove elements, we need the sortable to 'refresh'
             // so it can find the new/removed elements.
@@ -45015,25 +45014,27 @@ angular.module('ui.sortable', [])
             };
 
             callbacks.activate = function(e, ui) {
-              // We need to make a copy of the current element's contents so
-              // we can restore it after sortable has messed it up.
-              // This is inside activate (instead of start) in order to save
-              // both lists when dragging between connected lists.
-              savedNodes = element.contents();
+              if(e && ui) {
+                // We need to make a copy of the current element's contents so
+                // we can restore it after sortable has messed it up.
+                // This is inside activate (instead of start) in order to save
+                // both lists when dragging between connected lists.
+                savedNodes = element.contents();
 
-              // If this list has a placeholder (the connected lists won't),
-              // don't inlcude it in saved nodes.
-              var placeholder = element.sortable('option','placeholder');
+                // If this list has a placeholder (the connected lists won't),
+                // don't inlcude it in saved nodes.
+                var placeholder = element.sortable('option','placeholder');
 
-              // placeholder.element will be a function if the placeholder, has
-              // been created (placeholder will be an object).  If it hasn't
-              // been created, either placeholder will be false if no
-              // placeholder class was given or placeholder.element will be
-              // undefined if a class was given (placeholder will be a string)
-              if (placeholder && placeholder.element) {
-                savedNodes = savedNodes.not(element.find(
-                  "." + placeholder.element()
+                // placeholder.element will be a function if the placeholder, has
+                // been created (placeholder will be an object).  If it hasn't
+                // been created, either placeholder will be false if no
+                // placeholder class was given or placeholder.element will be
+                // undefined if a class was given (placeholder will be a string)
+                if (placeholder && placeholder.element) {
+                  savedNodes = savedNodes.not(element.find(
+                    "." + placeholder.element()
                     .attr('class').split(/\s+/).join('.')));
+                }
               }
             };
 
@@ -45056,7 +45057,7 @@ angular.module('ui.sortable', [])
               // the start and stop of repeat sections and sortable doesn't
               // respect their order (even if we cancel, the order of the
               // comments are still messed up).
-              savedNodes.detach().appendTo(element);
+savedNodes.detach().appendTo(element);
 
               // If received is true (an item was dropped in from another list)
               // then we add the new item to this list otherwise wait until the
@@ -45065,7 +45066,7 @@ angular.module('ui.sortable', [])
               if(ui.item.sortable.received) {
                 scope.$apply(function () {
                   ngModel.$modelValue.splice(ui.item.sortable.dropindex, 0,
-                                             ui.item.sortable.moved);
+                   ui.item.sortable.moved);
                 });
               }
             };
@@ -45098,7 +45099,7 @@ angular.module('ui.sortable', [])
               });
             };
 
-            scope.$watch(attrs.uiSortable, function(newVal, oldVal) {
+            scope.$watch(attrs.uiSortable, function(newVal) {
               angular.forEach(newVal, function(value, key) {
                 if(callbacks[key]) {
                   // wrap the callback
@@ -45121,7 +45122,7 @@ angular.module('ui.sortable', [])
         }
       };
     }
-  ]);;/*
+    ]);;/*
  * The MIT License
  * 
  * Copyright (c) 2013, Sebastian Sdorra
@@ -45167,7 +45168,7 @@ angular.module('adf')
       }
 
       return deferred.promise;
-    };
+    }
 
     function compileWidget($scope, $element) {
       var model = $scope.model;
@@ -45195,7 +45196,7 @@ angular.module('adf')
 
       // get resolve promises from content object
       var resolvers = {};
-      resolvers['$tpl'] = getTemplate(content);
+      resolvers.$tpl = getTemplate(content);
       if (content.resolve) {
         angular.forEach(content.resolve, function(promise, key) {
           if (angular.isString(promise)) {
@@ -45211,7 +45212,7 @@ angular.module('adf')
         angular.extend(locals, base);
 
         // compile & render template
-        var template = locals['$tpl'];
+        var template = locals.$tpl;
         $element.html(template);
         if (content.controller) {
           var templateCtrl = $controller(content.controller, locals);
@@ -45237,7 +45238,7 @@ angular.module('adf')
         model: '=',
         content: '='
       },
-      link: function($scope, $element, $attr) {
+      link: function($scope, $element) {
         compileWidget($scope, $element);
         $scope.$on('widgetConfigChanged', function(){
           compileWidget($scope, $element);
@@ -45319,14 +45320,14 @@ angular.module('adf')
           // collapse
           $scope.isCollapsed = false;
         } else {
-          $log.warn('could not find widget ' + type);
+          $log.warn('could not find widget ' + definition.type);
         }
       } else {
         $log.debug('definition not specified, widget was probably removed');
       }
     }
 
-    function postLink($scope, $element, $attr) {
+    function postLink($scope, $element) {
       var definition = $scope.definition;
       if (definition) {
         // bind close function
@@ -45383,7 +45384,7 @@ angular.module('adf')
         editMode: '@',
         collapsible: '='
       },
-      compile: function compile($element, $attr, transclude) {
+      compile: function compile() {
 
         /**
          * use pre link, because link of widget-content
@@ -45706,54 +45707,47 @@ angular.module('structures', ['adf'])
 });
 
 
-;/*
- * The MIT License
- *
- * Copyright (c) 2013, Sebastian Sdorra
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+;// Social Harvest is a social media analytics platform.
+//     Copyright (C) 2014 Tom Maiaroto, Shift8Creative, LLC (http://www.socialharvest.io)
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 'use strict';
 
-angular.module('sample', [
-  'adf', 'sample.widgets.news',
-  'sample.widgets.randommsg',
-  'sample.widgets.weather',
-  'sample.widgets.markdown',
-
-  'sample.widgets.linklist',
-  // 'sample.widgets.github',
-  'LocalStorageModule', 'structures', 'sample-01','ngRoute'
+angular.module('socialHarvest', [
+  'adf', 'socialHarvest.widgets.news',
+  'socialHarvest.widgets.randommsg',
+  'socialHarvest.widgets.weather',
+  'socialHarvest.widgets.markdown',
+  'socialHarvest.widgets.linklist',
+  // 'socialHarvest.widgets.github',
+  // 
+  'LocalStorageModule', 'structures', 'socialHarvest.territory', 'ngRoute'
 ])
 .config(function($routeProvider, localStorageServiceProvider){
   localStorageServiceProvider.setPrefix('adf');
 
-  $routeProvider.when('/sample/01', {
-    templateUrl: 'templates/home.html',
-    controller: 'sample01Ctrl'
+  $routeProvider.when('/territory/dashboard', {
+    templateUrl: 'templates/territory/dashboard.html',
+    controller: 'territoryDashboardCtrl'
   })
-  .when('/sample/02', {
+  .when('/', {
     templateUrl: 'templates/home.html',
-    controller: 'sample02Ctrl'
+    controller: 'homeController'
   })
   .otherwise({
-    redirectTo: '/sample/01'
+    redirectTo: '/'
   });
 
 })
@@ -45774,41 +45768,43 @@ angular.module('sample', [
     return page === currentRoute || new RegExp(page).test(currentRoute) ? 'active' : '';
   };
 
+})
+.controller('homeController', function($scope, $location){
+  // The homeController is responsible for everything dealing with the landing page of Social Harvest.
+  // It should include links to territories, overviews, and other various acitons.
+  
+  $scope.navClass = function(page) {
+    var currentRoute = $location.path().substring(1) || 'Social Harvest';
+    return page === currentRoute || new RegExp(page).test(currentRoute) ? 'active' : '';
+  };
 });
-;/* *
- * The MIT License
- *
- * Copyright (c) 2014, Sebastian Sdorra
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+;// Social Harvest is a social media analytics platform.
+//     Copyright (C) 2014 Tom Maiaroto, Shift8Creative, LLC (http://www.socialharvest.io)
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 'use strict';
 
-angular.module('sample-01', ['adf', 'LocalStorageModule'])
-.controller('sample01Ctrl', function($scope, localStorageService){
+angular.module('socialHarvest.territory', ['adf', 'LocalStorageModule'])
+.controller('territoryDashboardCtrl', function($scope, localStorageService){
 
-  var name = 'sample-01';
+  var name = 'territory-dashboard';
   var model = localStorageService.get(name);
   if (!model) {
     // set default model for demo purposes
     model = {
-      title: "Sample 01",
+      title: "Territory Overview",
       structure: "4-8",
       rows: [{
         columns: [{
@@ -45910,7 +45906,7 @@ angular.module('sample-01', ['adf', 'LocalStorageModule'])
 
 'use strict';
 
-angular.module('sample.widgets.news', ['adf.provider'])
+angular.module('socialHarvest.widgets.news', ['adf.provider'])
   .value('newsServiceUrl', 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&callback=JSON_CALLBACK&q=')
   .config(function(dashboardProvider){
     dashboardProvider
@@ -45978,7 +45974,7 @@ angular.module('sample.widgets.news', ['adf.provider'])
 
 'use strict';
 
-angular.module('sample.widgets.weather', ['adf.provider'])
+angular.module('socialHarvest.widgets.weather', ['adf.provider'])
   .value('weatherServiceUrl', 'http://api.openweathermap.org/data/2.5/weather?units=metric&callback=JSON_CALLBACK&q=')
   .config(function(dashboardProvider){
     dashboardProvider
@@ -46048,7 +46044,7 @@ angular.module('sample.widgets.weather', ['adf.provider'])
 
 'use strict';
 
-angular.module('sample.widgets.linklist', ['adf.provider'])
+angular.module('socialHarvest.widgets.linklist', ['adf.provider'])
   .config(function(dashboardProvider){
     dashboardProvider
       .widget('linklist', {
@@ -46107,7 +46103,7 @@ angular.module('sample.widgets.linklist', ['adf.provider'])
 
 'use strict';
 
-angular.module('sample.widgets.markdown', ['adf.provider', 'btford.markdown'])
+angular.module('socialHarvest.widgets.markdown', ['adf.provider', 'btford.markdown'])
   .config(function(dashboardProvider){
     dashboardProvider
       .widget('markdown', {
@@ -46159,7 +46155,7 @@ angular.module('sample.widgets.markdown', ['adf.provider', 'btford.markdown'])
 
 'use strict';
 
-angular.module('sample.widgets.randommsg', ['adf.provider'])
+angular.module('socialHarvest.widgets.randommsg', ['adf.provider'])
   .config(function(dashboardProvider){
     dashboardProvider
       .widget('randommsg', {

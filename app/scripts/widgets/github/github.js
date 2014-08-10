@@ -24,7 +24,7 @@
 
 'use strict';
 
-angular.module('sample.widgets.github', ['adf.provider', 'highcharts-ng'])
+angular.module('socialHarvest.widgets.github', ['adf.provider', 'highcharts-ng'])
   .value('githubApiUrl', 'https://api.github.com/repos/')
   .config(function(dashboardProvider){
     // template object for github widgets

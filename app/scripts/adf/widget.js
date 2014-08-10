@@ -69,14 +69,14 @@ angular.module('adf')
           // collapse
           $scope.isCollapsed = false;
         } else {
-          $log.warn('could not find widget ' + type);
+          $log.warn('could not find widget ' + definition.type);
         }
       } else {
         $log.debug('definition not specified, widget was probably removed');
       }
     }
 
-    function postLink($scope, $element, $attr) {
+    function postLink($scope, $element) {
       var definition = $scope.definition;
       if (definition) {
         // bind close function
@@ -133,7 +133,7 @@ angular.module('adf')
         editMode: '@',
         collapsible: '='
       },
-      compile: function compile($element, $attr, transclude) {
+      compile: function compile() {
 
         /**
          * use pre link, because link of widget-content

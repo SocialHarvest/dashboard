@@ -37,12 +37,11 @@ angular.module('adf.provider', [])
     var widgets = {};
     var structures = {};
     var messageTemplate = '<div class="alert alert-danger">{}</div>';
-    var loadingTemplate = '\
-      <div class="progress progress-striped active">\n\
-        <div class="progress-bar" role="progressbar" style="width: 100%">\n\
-          <span class="sr-only">loading ...</span>\n\
-        </div>\n\
-      </div>';
+    var loadingTemplate = '<div class="progress progress-striped active">\n' +
+        '<div class="progress-bar" role="progressbar" style="width: 100%">\n' +
+          '<span class="sr-only">loading ...</span>\n' +
+        '</div>\n' +
+      '</div>';
 
    /**
     * @ngdoc method
@@ -91,7 +90,7 @@ angular.module('adf.provider', [])
     * @returns {Object} self
     */
     this.widget = function(name, widget){
-      var w = angular.extend({reload: false}, widget)
+      var w = angular.extend({reload: false}, widget);
       if ( w.edit ){
         var edit = {reload: true};
         angular.extend(edit, w.edit);
