@@ -1,6 +1,6 @@
 # Social Harvest Dashboard
 
-[![Build Status](https://drone.io/github.com/tmaiaroto/social-harvest-dashboard/status.png)](https://drone.io/github.com/tmaiaroto/social-harvest-dashboard/latest) [![Coverage Status](https://coveralls.io/repos/tmaiaroto/social-harvest-dashboard/badge.png?branch=master)](https://coveralls.io/r/tmaiaroto/social-harvest-dashboard?branch=master)
+[![Build Status](https://drone.io/github.com/SocialHarvest/dashboard/status.png)](https://drone.io/github.com/SocialHarvest/dashboard/latest) [![Coverage Status](https://coveralls.io/repos/SocialHarvest/dashboard/badge.png?branch=master)](https://coveralls.io/r/SocialHarvest/dashboard?branch=master)
 
 A dashboard for Social Harvest&reg;, an open-source social media analytics platform.
 

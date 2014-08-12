@@ -1,7 +1,7 @@
 {
   "name": "social-harvest-dashboard",
   "version": "0.0.1",
-  "homepage": "https://github.com/Homebrew/homebrew",
+  "homepage": "http://www.socialharvest.io",
   "authors": [
     "Tom Maiaroto <tom@shift8creative.com>"
   ],
@@ -50,6 +50,6 @@
   "resolutions": {
     "angular": "1.2.18",
     "d3": "~3.3.13",
-    "moment": "moment#~2.8.1"
+    "moment": "~2.8.1"
   }
 }
