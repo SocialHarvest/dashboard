@@ -27,8 +27,8 @@
               <a href="#/sample/02">Sample 02</a>
             </li>
           </ul>-->
-          <div id="social-harvest-date-range-picker" class="col-xs-10 col-sm-5 col-md-3 social-harvest-date-range-picker">
-            {{dateFrom | amDateFormat:'MMM Do YYYY'}} <small><em>to</em></small> {{dateTo | amDateFormat:'MMM Do YYYY'}}
+          <div id="social-harvest-date-range-picker" class="pull-right social-harvest-date-range-picker">
+            {{dateFrom | amDateFormat:'MMM Do YYYY'}} <small><em>to</em></small> {{dateTo | amDateFormat:'MMM Do YYYY'}} <i class="fa fa-sort-down"></i>
             <input ng-model="dateFrom"  name="dateFrom" id="social-harvest-date-range-from-input" />
             <input ng-model="dateTo" name="dateFrom" id="social-harvest-date-range-to-input" />
           </div>

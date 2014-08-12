@@ -6503,6 +6503,9 @@ a {
 .social-harvest-date-range-picker:hover {
     color: #fff;
 }
+.social-harvest-date-range-picker i {
+    font-size: 75%;
+}
 .social-harvest-date-range-picker small, .social-harvest-date-range-picker small:hover {
     font-size: 70%;
     color: #676767;
