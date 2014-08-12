@@ -9,6 +9,9 @@ libpeerconnection.log
 /app/styles/custom-bootstrap.css
 /app/fonts/fontawesome-*
 /app/fonts/FontAwesome.otf
+app/fonts/glyphicons-halflings-*
 social-harvest-dashboard.sublime-project
 social-harvest-dashboard.sublime-workspace
+.sublime-grunt.cache
 social-harvest-conf.json
+config.js

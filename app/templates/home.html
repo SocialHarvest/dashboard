@@ -1,3 +1,9 @@
-<div ng-controller="homeController">
+<div ng-controller="HomeController">
 	<h1>Social Harvest</h1>
+	<div>
+		<h3>Available Territories</h3>
+		<ul ng-repeat="(key, territory) in territories">
+			<li><a href="#/territory/dashboard/{{territory.name}}">{{territory.name}}</a></li>
+		</ul>
+	</div>
 </div>

@@ -4,7 +4,7 @@
 
 A dashboard for Social Harvest&reg;, an open-source social media analytics platform.
 
-This application uses AngularJS, D3.js, and NVD3 to create a modular and extensible dashboard for analyzing harvested social media data stored in InfluxDB.
+This application uses AngularJS, D3.js, and NVD3 to create a modular and extensible dashboard for analyzing harvested social media data.
 
 The [Yearofmoo AngularJS Seed Repo](https://github.com/yearofmoo/angularjs-seed-repo) was used as a starting point for this application and includes helpful unit testing tools, Protractor integration and coverage testing.
 Several packages have been updated, but the installation, development, and testing instructions remain the same.

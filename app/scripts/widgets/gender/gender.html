@@ -1,0 +1,29 @@
+<div class="text-center">
+  <div class="alert alert-info" ng-if="!TerritoryGender">
+    No data found
+  </div>
+  <div class="gender" ng-if="TerritoryGender">
+    <div class="gender-value">
+    	<div class="gender-icon"><i class="fa fa-male gender-female-icon"></i></div>
+    	<div class="gender-label">
+    		{{(TerritoryGender.male/TerritoryGender.aggregateTotal) * 100 | number:2}}%
+    		<br /><span class="gender-label-small">({{TerritoryGender.male}})</span>
+    		
+    	</div>
+    </div>
+    <div class="gender-value">
+    	<div class="gender-icon"><i class="fa fa-female gender-male-icon"></i></div>
+    	<div class="gender-label">
+    		{{(TerritoryGender.female/TerritoryGender.aggregateTotal) * 100 | number:2}}%
+    		<br /><span class="gender-label-small">({{TerritoryGender.female}})</span>
+    	</div>
+    </div>
+    <div class="gender-value" ng-if="!config.hideUnknown">
+    	<div class="gender-icon"><i class="fa fa-question gender-unknown-icon"></i></div>
+    	<div class="gender-label">
+    		{{(TerritoryGender.unknown/TerritoryGender.aggregateTotal) * 100 | number:2}}%
+    		<br /><span class="gender-label-small">({{TerritoryGender.unknown}})</span>
+    	</div>
+    </div>
+  </div>
+</div>

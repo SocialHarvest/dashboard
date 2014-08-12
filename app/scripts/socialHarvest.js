@@ -16,20 +16,44 @@
 
 'use strict';
 
-angular.module('socialHarvest', [
-  'adf', 'socialHarvest.widgets.news',
+var socialHarvestApp = angular.module('socialHarvest', [
+  'ui.bootstrap', 
+  //'ui.bootstrap.datepicker',
+  'adf',
+  // example widgets
+  'socialHarvest.widgets.news',
   'socialHarvest.widgets.randommsg',
   'socialHarvest.widgets.weather',
   'socialHarvest.widgets.markdown',
   'socialHarvest.widgets.linklist',
   // 'socialHarvest.widgets.github',
+  //
+  'socialHarvest.widgets.gender',
   // 
-  'LocalStorageModule', 'structures', 'socialHarvest.territory', 'ngRoute'
+  'angularMoment',
+  'LocalStorageModule','structures',
+  'territoryServices',
+  'socialHarvest.territory',
+  'ngRoute', 'ngResource'
 ])
+.value('globals', {
+  config : "social-harvest-dashboard-config.json"
+})
+.run(function($rootScope) {
+  $rootScope.Config = {
+    "apiHost": "http://localhost:2345"
+  };
+  if(window.SocialHarvestConfig !== undefined) {
+    $rootScope.Config = window.SocialHarvestConfig;
+  }
+  // Default dates
+  $rootScope.dateFrom = moment().subtract(29, 'days').format('YYYY-MM-DD');
+  $rootScope.dateTo = moment().format('YYYY-MM-DD');
+})
 .config(function($routeProvider, localStorageServiceProvider){
   localStorageServiceProvider.setPrefix('adf');
 
-  $routeProvider.when('/territory/dashboard', {
+  $routeProvider.when('/territory/dashboard/:territoryName', {
     templateUrl: 'templates/territory/dashboard.html',
     controller: 'territoryDashboardCtrl'
   })
@@ -42,7 +66,7 @@ angular.module('socialHarvest', [
   });
 
 })
-.controller('navigationCtrl', function($scope, $location){
+.controller('NavigationCtrl', function($scope, $rootScope, $location){
 
   $scope.navCollapsed = true;
 
@@ -59,13 +83,60 @@ angular.module('socialHarvest', [
     return page === currentRoute || new RegExp(page).test(currentRoute) ? 'active' : '';
   };
 
+  // Date picker (watch dateFrom and dateTo locally, but send to $rootScope for everything else)
+  $scope.dateFrom = $rootScope.dateFrom;
+  $scope.dateTo = $rootScope.dateFrom;
+  $scope.$watch('dateFrom', function(newVal, oldVal) {
+    if(newVal !== oldVal) {
+      $rootScope.dateFrom = newVal;
+    }
+  });
+  $scope.$watch('dateTo', function(newVal, oldVal) {
+    if(newVal !== oldVal) {
+      $rootScope.dateTo = newVal;
+    }
+  });
+
+
 })
-.controller('homeController', function($scope, $location){
+.controller('HomeController', function($scope, $location, TerritoryIndex){
   // The homeController is responsible for everything dealing with the landing page of Social Harvest.
   // It should include links to territories, overviews, and other various acitons.
   
+  // Initial territory listing on page load
+  TerritoryIndex.get({q: $scope.q}, function(u, getResponseHeaders) {
+    if(u._meta.success === true) {
+      $scope.territories = u._data.territories;
+    }
+  });
+
   $scope.navClass = function(page) {
     var currentRoute = $location.path().substring(1) || 'Social Harvest';
     return page === currentRoute || new RegExp(page).test(currentRoute) ? 'active' : '';
   };
+});
+
+// The date range picker is not in AngularJS (for now)
+$(document).ready(function() {
+  //$('input[name="daterange"]').daterangepicker({
+  $('#social-harvest-date-range-picker').daterangepicker({
+    ranges: {
+     'Today': [new Date(), new Date()],
+     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+     'Last 7 Days': [moment().subtract(6, 'days'), new Date()],
+     'Last 30 Days': [moment().subtract(29, 'days'), new Date()],
+     'This Month': [moment().startOf('month'), moment().endOf('month')],
+     'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    },
+    opens: 'left',
+    format: 'YYYY-MM-DD',
+    startDate: moment().subtract(29, 'days'),
+    endDate: new Date()
+  });
+
+  $('#social-harvest-date-range-picker').on('apply.daterangepicker', function(ev, picker) {
+    $('#social-harvest-date-range-from-input').val(picker.startDate.format('YYYY-MM-DD')).trigger('change');
+    $('#social-harvest-date-range-to-input').val(picker.endDate.format('YYYY-MM-DD')).trigger('change');
+  });
+
 });

@@ -1,0 +1,32 @@
+.gender-male-icon {
+	font-size: 400%;
+	color: #51b7ff;
+}
+.gender-female-icon {
+	font-size: 400%;
+	color: #fe07ca;
+}
+.gender-unknown-icon {
+	font-size: 400%;
+	color: #ccc;
+}
+.gender-value {
+	float: left;
+	margin-right: 15px;
+}
+.gender-icon {
+	float: left;
+	margin-right: 5px;
+}
+.gender-label {
+	float: left;
+	font-size: 125%;
+	font-weight: 600;
+	text-align: center;
+}
+.gender-label-small {
+	font-size: 75%;
+	color: #bbb;
+	font-weight: normal;
+	text-align: center;
+}

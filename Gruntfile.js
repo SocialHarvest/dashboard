@@ -94,9 +94,12 @@ module.exports = function(grunt) {
         src: [
           'app/styles/adf.css',
           //'bower_components/bootstrap/dist/css/bootstrap.min.css',
+          'bower_components/AngularJS-Toaster/toaster.css',
           'app/styles/custom-bootstrap.css',
           'bower_components/components-font-awesome/css/font-awesome.min.css',
           'bower_components/pure/pure-min.css',
+          'bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css',
+          'app/scripts/widgets/gender/gender.css',
           'app/styles/app.css',
         ]
       },
@@ -111,9 +114,11 @@ module.exports = function(grunt) {
           'bower_components/jquery-ui/ui/jquery.ui.widget.js',
           'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
           'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
+          'bower_components/moment/moment.js',
 
           'bower_components/angular/angular.js',
           'bower_components/angular-sanitize/angular-sanitize.js',
+          'bower_components/angular-resource/angular-resource.js',
           'bower_components/angular-route/angular-route.js',
           'bower_components/angular-animate/angular-animate.js',
           'bower_components/showdown/compressed/showdown.js',
@@ -121,8 +126,11 @@ module.exports = function(grunt) {
           'bower_components/showdown/compressed/extensions/twitter.js',
           'bower_components/angular-markdown-directive/markdown.js',
           'bower_components/angular-local-storage/angular-local-storage.js',
+          'bower_components/AngularJS-Toaster/toaster.js',
+          'bower_components/angular-moment/angular-moment.js',
           'bower_components/angular-bootstrap/ui-bootstrap.js',
           'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+          'bower_components/bootstrap-daterangepicker/daterangepicker.js',
 
           'app/scripts/adf/adf.js',
           'app/scripts/adf/structures.js',
@@ -132,12 +140,17 @@ module.exports = function(grunt) {
           'app/scripts/adf/widget.js',
           'app/scripts/adf/dashboard.js',
           // Social Harvest Dashboard specific
+          // Note: add a config.js file using the sample-config.js as a guide.
+          'app/scripts/config.js',
           'app/scripts/structures.js',
           'app/scripts/socialHarvest.js',
+          'app/scripts/services/territory.js',
           'app/scripts/territory.js',
           // 'app/scripts/sample-01.js', // just left as an example dashboard for reference - not in use
 
           // Widgets
+          'app/scripts/widgets/gender/gender.js',
+          // Example widgets
           'app/scripts/widgets/news/news.js',
           'app/scripts/widgets/weather/weather.js',
           'app/scripts/widgets/linklist/linklist.js',
@@ -151,7 +164,7 @@ module.exports = function(grunt) {
     copy: {
       main: {
         files: [
-          {expand: true, flatten: true, src: ['bower_components/components-font-awesome/fonts/*'], dest: 'app/fonts/'},
+          {expand: true, flatten: true, src: ['bower_components/components-font-awesome/fonts/*', 'bower_components/bootstrap/fonts/*'], dest: 'app/fonts/'},
         ]
       }
     },
@@ -208,7 +221,7 @@ module.exports = function(grunt) {
     coveralls: {
       options: {
         debug: true,
-        coverage_dir: 'coverage/',
+        coverage_dir: 'coverage',
         //dryRun: true,
         force: true,
         recursive: true
@@ -231,7 +244,7 @@ module.exports = function(grunt) {
   grunt.registerTask('coverage', ['karma:unit_coverage','open:coverage','connect:coverage']);
 
   //installation-related
-  grunt.registerTask('install', ['update','shell:protractor_install']);
+  grunt.registerTask('install', ['update','shell:protractor_install','copy']);
   grunt.registerTask('update', ['shell:npm_install', 'less:customBootstrap', 'concat']);
 
   //defaults

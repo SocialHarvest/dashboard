@@ -83,6 +83,48 @@ body {
     background: #eeefef;
 }
 
+a {
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.social-harvest-date-range-picker {
+    outline: none;
+    float: right;
+    margin-top: 8px;
+    display: block;
+    font-size: 150%;
+    outline: none;
+    color: #b2b2b2;
+    cursor: pointer;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+.social-harvest-date-range-picker:hover {
+    color: #fff;
+}
+.social-harvest-date-range-picker small, .social-harvest-date-range-picker small:hover {
+    font-size: 70%;
+    color: #676767;
+}
+#social-harvest-date-range-from-input, #social-harvest-date-range-to-input {
+    display: none;
+}
+
 /* Panels */
 .panel, .panel-heading {
   -webkit-border-radius: 0 !important;
