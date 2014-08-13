@@ -38,55 +38,55 @@ angular.module('socialHarvest.widgets.timeseriesLine', ['adf.provider', 'nvd3Cha
       "values": []
     };
 
-    // Automatically choose the resolution based on date range. Don't let this be configured because it could get confusing.
-    // When the time slices are too small, say every 5 minutes for a date range of a week...Visually things don't fit first off.
-    // Second, it creates a visual problem as the data loads in (because it takes a while to load and the way NVD3 is setup with the directives).
-    // TODO: Look into how to smooth out that animation and then maybe allow this setting to be changed...But that still doesn't help people out
-    // when there's too many x-axis items to be able to tell them apart. Maybe another animated graph widget would be better that scrolls a graph
-    // with only part of it in view at a time.
-    // 
-    // In minutes, so this is one day (default resolution).
-    $scope.autoResolution = 1440;
+    // Listen for either date from or date to change in the date range...But don't open two streams.
+    // Not only does it keep another connection open on the server (and if we don't close any, it ends up slowing down the browser),
+    // but it also messes with the line chart. Visual glitches when trying to graph a series that isn't quite right.
+    $scope.currentStream = {abort:function(){}};
+    var updateLock = false;
 
-    $scope.setAutoResolution = function() {
-      var fromMoment = moment($rootScope.dateFrom);
-      var toMoment = moment($rootScope.dateTo);
-      var daysDiff = toMoment.diff(fromMoment, 'days');
+    $scope.countTimeseries = function(resolution){
+      // Kill whatever other connection was going on and set the lock.
+      $scope.currentStream.abort();
+      updateLock = true;
 
-      // Every hour if only displaying a single day.
-      if(daysDiff == 1) {
-        $scope.autoResolution = 60;
-      }
-      // Every week if displaying more than a month
-      if(daysDiff > 31) {
-        $scope.autoResolution = 10080;
-      }
-      // Every month if displaying a year or more
-      if(daysDiff >= 365) {
-        $scope.autoResolution = 43829;
-      }
-    };
+      // Reset data.
+      $scope.graphData = [];
+      series = {
+        "key": "Mentions",
+        "values": []
+      };
 
-
-    $scope.aggregateTimeseries = function(){
       TerritoryTimeseriesCount.stream({
         territory: "javascript",
         series: "messages",
         field: "*",
         fieldValue: "",
         network: "",
-        resolution: $scope.autoResolution,
+        resolution: 1440,
         from: $rootScope.dateFrom,
         to: $rootScope.dateTo,
         path: '{count timeFrom}'
       },
       // start
       function(status, headers){
+        // As soon as we have a response from the server, we can remove the lock.
+        // When both date values update and call `countTimeseries` at the same(ish) time, it opens two connections...
+        // But the $watch is fast enough that both will fire before a connection to the server can be made (even locally).
+        // TODO: This seems to limit things, but look into a better solution.
+        // Maybe have another variable in $rootScope update that says the entire date range has updated...Which would mean it would have to timeout.
+        // Because each date can be adjusted separately so one may not change. If it were to, it would certainly change within a second or two.
+        // ...which is kind of the idea behind the lock being here...But I imagine other widgets will run into this issue and have this need too.
+        updateLock = false;
         // console.dir(headers);
         // this.abort(); // could be called from here too
       },
       // node
       function(data){
+      },
+      // done
+      function(data){
+        $scope.currentStream = this;
+
         if(data !== null) {
           var count = (data.count !== undefined) ? data.count:0;
           series.values.push([moment(data.timeFrom).unix(), count]);
@@ -96,13 +96,12 @@ angular.module('socialHarvest.widgets.timeseriesLine', ['adf.provider', 'nvd3Cha
         $scope.$apply(function() {
           $scope.graphData = [series];
         });
-       
-      },
-      // done
-      function(parsedJson){
-        /*$scope.$apply(function() {
-          $scope.graphData = [series];
-        });*/
+
+        // Abort and close the connection once we've reached results for the end of the current date range.
+        // This may never happen depending on the circumstances...But it's nice to get back resources if we know we're done.
+        if(moment(data.timeTo).unix() >= moment($rootScope.dateTo).unix()) {
+          this.abort();
+        }
       });
     };
 
@@ -114,31 +113,22 @@ angular.module('socialHarvest.widgets.timeseriesLine', ['adf.provider', 'nvd3Cha
     };
 
     // Initial load.
-    $scope.aggregateTimeseries();
+    $scope.countTimeseries();
+
 
     // If the date range changes, re-load.
     $rootScope.$watch('dateTo', function(newVal, oldVal) {
       if(newVal !== oldVal) {
-        $scope.setAutoResolution();
-
-        $scope.graphData = [];
-        series = {
-          "key": "Mentions",
-          "values": []
-        };
-        $scope.aggregateTimeseries();
+        if(!updateLock) {
+          $scope.countTimeseries();
+        }
       }
     });
     $rootScope.$watch('dateFrom', function(newVal, oldVal) {
       if(newVal !== oldVal) {
-        $scope.setAutoResolution();
-
-        $scope.graphData = [];
-        series = {
-          "key": "Mentions",
-          "values": []
-        };
-        $scope.aggregateTimeseries();
+        if(!updateLock) {
+          $scope.countTimeseries();
+        }
       }
     });
 
