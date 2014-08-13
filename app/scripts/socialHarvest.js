@@ -29,6 +29,7 @@ var socialHarvestApp = angular.module('socialHarvest', [
   // 'socialHarvest.widgets.github',
   //
   'socialHarvest.widgets.gender',
+  'socialHarvest.widgets.timeseriesLine',
   // 
   'angularMoment',
   'LocalStorageModule','structures',
@@ -85,7 +86,7 @@ var socialHarvestApp = angular.module('socialHarvest', [
 
   // Date picker (watch dateFrom and dateTo locally, but send to $rootScope for everything else)
   $scope.dateFrom = $rootScope.dateFrom;
-  $scope.dateTo = $rootScope.dateFrom;
+  $scope.dateTo = $rootScope.dateTo;
   $scope.$watch('dateFrom', function(newVal, oldVal) {
     if(newVal !== oldVal) {
       $rootScope.dateFrom = newVal;

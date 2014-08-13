@@ -26,10 +26,43 @@ angular.module('territoryServices', ['ngResource'])
   ])
   .factory('TerritoryAggregate', ['$resource', '$http', '$rootScope',
     function($resource, $http, $rootScope) {
-      return $resource($rootScope.Config.apiHost + '/territory/aggregate/:territory/:series', {from: "@date", to: "@date", fields: ""}, {
+      return $resource($rootScope.Config.apiHost + '/territory/aggregate/:territory/:series', {from: "@date", to: "@date", fields: "", network: ""}, {
         get: {
           method: 'GET'
         }
       });
+    }
+  ])
+  .factory('TerritoryTimeseriesAggregate', ['$resource', '$http', '$rootScope', 
+    function($resource, $http, $rootScope) {
+      return {
+        stream: function(options, startFn, nodeFn, doneFn) {
+          oboe($rootScope.Config.apiHost + '/territory/timeseries/aggregate/' + options.territory + '/' + options.series + '?fields=' + options.fields + '&from=' + options.from + '&to=' + options.to + '&network=' + options.network + '&resolution=' + options.resolution)
+           .start(startFn)
+           .node(options.path, nodeFn)
+           .done(doneFn);
+        }
+      };
+    }
+  ])
+  .factory('TerritoryCount', ['$resource', '$http', '$rootScope',
+    function($resource, $http, $rootScope) {
+      return $resource($rootScope.Config.apiHost + '/territory/count/:territory/:series/:field', {from: "@date", to: "@date", fieldValue: "", network: ""}, {
+        get: {
+          method: 'GET'
+        }
+      });
+    }
+  ])
+  .factory('TerritoryTimeseriesCount', ['$resource', '$http', '$rootScope', 
+    function($resource, $http, $rootScope) {
+      return {
+        stream: function(options, startFn, nodeFn, doneFn) {
+          oboe($rootScope.Config.apiHost + '/territory/timeseries/count/' + options.territory + '/' + options.series + '/' + options.field + '?from=' + options.from + '&to=' + options.to + '&network=' + options.network + '&resolution=' + options.resolution)
+           .start(startFn)
+           .node(options.path, nodeFn)
+           .done(doneFn);
+        }
+      };
     }
   ]);

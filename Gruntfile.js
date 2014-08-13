@@ -99,7 +99,9 @@ module.exports = function(grunt) {
           'bower_components/components-font-awesome/css/font-awesome.min.css',
           'bower_components/pure/pure-min.css',
           'bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css',
+          'bower_components/nvd3/nv.d3.css',
           'app/scripts/widgets/gender/gender.css',
+          'app/scripts/widgets/timeseries-line/line.css',
           'app/styles/app.css',
         ]
       },
@@ -115,6 +117,7 @@ module.exports = function(grunt) {
           'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
           'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
           'bower_components/moment/moment.js',
+          'bower_components/oboe/dist/oboe-browser.js',
 
           'bower_components/angular/angular.js',
           'bower_components/angular-sanitize/angular-sanitize.js',
@@ -131,6 +134,10 @@ module.exports = function(grunt) {
           'bower_components/angular-bootstrap/ui-bootstrap.js',
           'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
           'bower_components/bootstrap-daterangepicker/daterangepicker.js',
+
+          'bower_components/d3/d3.js',
+          'bower_components/nvd3/nv.d3.js',
+          'bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js',
 
           'app/scripts/adf/adf.js',
           'app/scripts/adf/structures.js',
@@ -150,6 +157,7 @@ module.exports = function(grunt) {
 
           // Widgets
           'app/scripts/widgets/gender/gender.js',
+          'app/scripts/widgets/timeseries-line/timeseries-line.js',
           // Example widgets
           'app/scripts/widgets/news/news.js',
           'app/scripts/widgets/weather/weather.js',
