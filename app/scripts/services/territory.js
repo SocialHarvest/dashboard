@@ -24,9 +24,18 @@ angular.module('territoryServices', ['ngResource'])
       });
     }
   ])
+  .factory('TerritoryMessages', ['$resource', '$http', '$rootScope',
+    function($resource, $http, $rootScope) {
+      return $resource($rootScope.Config.apiHost + '/territory/messages/:territory', {from: "@date", to: "@date", network: "", limit: "", skip: "", lang: "", country: "", geohash: "", gender: "", questions: "", search: ""}, {
+        get: {
+          method: 'GET'
+        }
+      });
+    }
+  ])
   .factory('TerritoryAggregate', ['$resource', '$http', '$rootScope',
     function($resource, $http, $rootScope) {
-      return $resource($rootScope.Config.apiHost + '/territory/aggregate/:territory/:series', {from: "@date", to: "@date", fields: "", network: ""}, {
+      return $resource($rootScope.Config.apiHost + '/territory/aggregate/:territory/:series', {from: "@date", to: "@date", fields: "", network: "", limit: ""}, {
         get: {
           method: 'GET'
         }

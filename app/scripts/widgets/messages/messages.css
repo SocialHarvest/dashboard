@@ -1,0 +1,25 @@
+.messages-widget-profile-picture {
+	width: 48px;
+}
+
+.messages-widget-female-icon {
+	color: #fe07ca;
+}
+.messages-widget-male-icon {
+	color: #51b7ff;
+}
+.messages-widget-unknown-icon {
+	color: #cccccc;
+}
+
+.messages-widget-message-body {
+	clear: left;
+	display: block;
+	font-size: 108%;
+}
+.messages-widget-link-out {
+	float: right;
+}
+.messages-widget-contributor-link a, .messages-widget-contributor-link a:hover {
+	color: #616161 !important;
+}

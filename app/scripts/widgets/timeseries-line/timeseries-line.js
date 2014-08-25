@@ -57,7 +57,7 @@ angular.module('socialHarvest.widgets.timeseriesLine', ['adf.provider', 'nvd3Cha
       };
 
       TerritoryTimeseriesCount.stream({
-        territory: "javascript",
+        territory: $rootScope.territoryName,
         series: "messages",
         field: "*",
         fieldValue: "",

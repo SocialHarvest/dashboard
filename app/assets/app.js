@@ -42954,7 +42954,206 @@ angularLocalStorage.provider('localStorageService', function() {
 });
 }).call(this);
 
-;'use strict';
+;/*
+  angular-md5 - v0.1.7 
+  2014-01-20
+*/
+(function(window, angular, undefined) {
+  angular.module("angular-md5", [ "gdi2290.md5" ]);
+  angular.module("ngMd5", [ "gdi2290.md5" ]);
+  angular.module("gdi2290.md5", [ "gdi2290.gravatar-filter", "gdi2290.md5-service", "gdi2290.md5-filter" ]);
+  "use strict";
+  angular.module("gdi2290.gravatar-filter", []).filter("gravatar", [ "md5", function(md5) {
+    var cache = {};
+    return function(text, defaultText) {
+      if (!cache[text]) {
+        defaultText = defaultText ? md5.createHash(defaultText.toString().toLowerCase()) : "";
+        cache[text] = text ? md5.createHash(text.toString().toLowerCase()) : defaultText;
+      }
+      return cache[text];
+    };
+  } ]);
+  "use strict";
+  angular.module("gdi2290.md5-filter", []).filter("md5", [ "md5", function(md5) {
+    return function(text) {
+      return text ? md5.createHash(text.toString().toLowerCase()) : text;
+    };
+  } ]);
+  "use strict";
+  angular.module("gdi2290.md5-service", []).factory("md5", [ function() {
+    var md5 = {
+      createHash: function(str) {
+        var xl;
+        var rotateLeft = function(lValue, iShiftBits) {
+          return lValue << iShiftBits | lValue >>> 32 - iShiftBits;
+        };
+        var addUnsigned = function(lX, lY) {
+          var lX4, lY4, lX8, lY8, lResult;
+          lX8 = lX & 2147483648;
+          lY8 = lY & 2147483648;
+          lX4 = lX & 1073741824;
+          lY4 = lY & 1073741824;
+          lResult = (lX & 1073741823) + (lY & 1073741823);
+          if (lX4 & lY4) {
+            return lResult ^ 2147483648 ^ lX8 ^ lY8;
+          }
+          if (lX4 | lY4) {
+            if (lResult & 1073741824) {
+              return lResult ^ 3221225472 ^ lX8 ^ lY8;
+            } else {
+              return lResult ^ 1073741824 ^ lX8 ^ lY8;
+            }
+          } else {
+            return lResult ^ lX8 ^ lY8;
+          }
+        };
+        var _F = function(x, y, z) {
+          return x & y | ~x & z;
+        };
+        var _G = function(x, y, z) {
+          return x & z | y & ~z;
+        };
+        var _H = function(x, y, z) {
+          return x ^ y ^ z;
+        };
+        var _I = function(x, y, z) {
+          return y ^ (x | ~z);
+        };
+        var _FF = function(a, b, c, d, x, s, ac) {
+          a = addUnsigned(a, addUnsigned(addUnsigned(_F(b, c, d), x), ac));
+          return addUnsigned(rotateLeft(a, s), b);
+        };
+        var _GG = function(a, b, c, d, x, s, ac) {
+          a = addUnsigned(a, addUnsigned(addUnsigned(_G(b, c, d), x), ac));
+          return addUnsigned(rotateLeft(a, s), b);
+        };
+        var _HH = function(a, b, c, d, x, s, ac) {
+          a = addUnsigned(a, addUnsigned(addUnsigned(_H(b, c, d), x), ac));
+          return addUnsigned(rotateLeft(a, s), b);
+        };
+        var _II = function(a, b, c, d, x, s, ac) {
+          a = addUnsigned(a, addUnsigned(addUnsigned(_I(b, c, d), x), ac));
+          return addUnsigned(rotateLeft(a, s), b);
+        };
+        var convertToWordArray = function(str) {
+          var lWordCount;
+          var lMessageLength = str.length;
+          var lNumberOfWords_temp1 = lMessageLength + 8;
+          var lNumberOfWords_temp2 = (lNumberOfWords_temp1 - lNumberOfWords_temp1 % 64) / 64;
+          var lNumberOfWords = (lNumberOfWords_temp2 + 1) * 16;
+          var lWordArray = new Array(lNumberOfWords - 1);
+          var lBytePosition = 0;
+          var lByteCount = 0;
+          while (lByteCount < lMessageLength) {
+            lWordCount = (lByteCount - lByteCount % 4) / 4;
+            lBytePosition = lByteCount % 4 * 8;
+            lWordArray[lWordCount] = lWordArray[lWordCount] | str.charCodeAt(lByteCount) << lBytePosition;
+            lByteCount++;
+          }
+          lWordCount = (lByteCount - lByteCount % 4) / 4;
+          lBytePosition = lByteCount % 4 * 8;
+          lWordArray[lWordCount] = lWordArray[lWordCount] | 128 << lBytePosition;
+          lWordArray[lNumberOfWords - 2] = lMessageLength << 3;
+          lWordArray[lNumberOfWords - 1] = lMessageLength >>> 29;
+          return lWordArray;
+        };
+        var wordToHex = function(lValue) {
+          var wordToHexValue = "", wordToHexValue_temp = "", lByte, lCount;
+          for (lCount = 0; lCount <= 3; lCount++) {
+            lByte = lValue >>> lCount * 8 & 255;
+            wordToHexValue_temp = "0" + lByte.toString(16);
+            wordToHexValue = wordToHexValue + wordToHexValue_temp.substr(wordToHexValue_temp.length - 2, 2);
+          }
+          return wordToHexValue;
+        };
+        var x = [], k, AA, BB, CC, DD, a, b, c, d, S11 = 7, S12 = 12, S13 = 17, S14 = 22, S21 = 5, S22 = 9, S23 = 14, S24 = 20, S31 = 4, S32 = 11, S33 = 16, S34 = 23, S41 = 6, S42 = 10, S43 = 15, S44 = 21;
+        x = convertToWordArray(str);
+        a = 1732584193;
+        b = 4023233417;
+        c = 2562383102;
+        d = 271733878;
+        xl = x.length;
+        for (k = 0; k < xl; k += 16) {
+          AA = a;
+          BB = b;
+          CC = c;
+          DD = d;
+          a = _FF(a, b, c, d, x[k + 0], S11, 3614090360);
+          d = _FF(d, a, b, c, x[k + 1], S12, 3905402710);
+          c = _FF(c, d, a, b, x[k + 2], S13, 606105819);
+          b = _FF(b, c, d, a, x[k + 3], S14, 3250441966);
+          a = _FF(a, b, c, d, x[k + 4], S11, 4118548399);
+          d = _FF(d, a, b, c, x[k + 5], S12, 1200080426);
+          c = _FF(c, d, a, b, x[k + 6], S13, 2821735955);
+          b = _FF(b, c, d, a, x[k + 7], S14, 4249261313);
+          a = _FF(a, b, c, d, x[k + 8], S11, 1770035416);
+          d = _FF(d, a, b, c, x[k + 9], S12, 2336552879);
+          c = _FF(c, d, a, b, x[k + 10], S13, 4294925233);
+          b = _FF(b, c, d, a, x[k + 11], S14, 2304563134);
+          a = _FF(a, b, c, d, x[k + 12], S11, 1804603682);
+          d = _FF(d, a, b, c, x[k + 13], S12, 4254626195);
+          c = _FF(c, d, a, b, x[k + 14], S13, 2792965006);
+          b = _FF(b, c, d, a, x[k + 15], S14, 1236535329);
+          a = _GG(a, b, c, d, x[k + 1], S21, 4129170786);
+          d = _GG(d, a, b, c, x[k + 6], S22, 3225465664);
+          c = _GG(c, d, a, b, x[k + 11], S23, 643717713);
+          b = _GG(b, c, d, a, x[k + 0], S24, 3921069994);
+          a = _GG(a, b, c, d, x[k + 5], S21, 3593408605);
+          d = _GG(d, a, b, c, x[k + 10], S22, 38016083);
+          c = _GG(c, d, a, b, x[k + 15], S23, 3634488961);
+          b = _GG(b, c, d, a, x[k + 4], S24, 3889429448);
+          a = _GG(a, b, c, d, x[k + 9], S21, 568446438);
+          d = _GG(d, a, b, c, x[k + 14], S22, 3275163606);
+          c = _GG(c, d, a, b, x[k + 3], S23, 4107603335);
+          b = _GG(b, c, d, a, x[k + 8], S24, 1163531501);
+          a = _GG(a, b, c, d, x[k + 13], S21, 2850285829);
+          d = _GG(d, a, b, c, x[k + 2], S22, 4243563512);
+          c = _GG(c, d, a, b, x[k + 7], S23, 1735328473);
+          b = _GG(b, c, d, a, x[k + 12], S24, 2368359562);
+          a = _HH(a, b, c, d, x[k + 5], S31, 4294588738);
+          d = _HH(d, a, b, c, x[k + 8], S32, 2272392833);
+          c = _HH(c, d, a, b, x[k + 11], S33, 1839030562);
+          b = _HH(b, c, d, a, x[k + 14], S34, 4259657740);
+          a = _HH(a, b, c, d, x[k + 1], S31, 2763975236);
+          d = _HH(d, a, b, c, x[k + 4], S32, 1272893353);
+          c = _HH(c, d, a, b, x[k + 7], S33, 4139469664);
+          b = _HH(b, c, d, a, x[k + 10], S34, 3200236656);
+          a = _HH(a, b, c, d, x[k + 13], S31, 681279174);
+          d = _HH(d, a, b, c, x[k + 0], S32, 3936430074);
+          c = _HH(c, d, a, b, x[k + 3], S33, 3572445317);
+          b = _HH(b, c, d, a, x[k + 6], S34, 76029189);
+          a = _HH(a, b, c, d, x[k + 9], S31, 3654602809);
+          d = _HH(d, a, b, c, x[k + 12], S32, 3873151461);
+          c = _HH(c, d, a, b, x[k + 15], S33, 530742520);
+          b = _HH(b, c, d, a, x[k + 2], S34, 3299628645);
+          a = _II(a, b, c, d, x[k + 0], S41, 4096336452);
+          d = _II(d, a, b, c, x[k + 7], S42, 1126891415);
+          c = _II(c, d, a, b, x[k + 14], S43, 2878612391);
+          b = _II(b, c, d, a, x[k + 5], S44, 4237533241);
+          a = _II(a, b, c, d, x[k + 12], S41, 1700485571);
+          d = _II(d, a, b, c, x[k + 3], S42, 2399980690);
+          c = _II(c, d, a, b, x[k + 10], S43, 4293915773);
+          b = _II(b, c, d, a, x[k + 1], S44, 2240044497);
+          a = _II(a, b, c, d, x[k + 8], S41, 1873313359);
+          d = _II(d, a, b, c, x[k + 15], S42, 4264355552);
+          c = _II(c, d, a, b, x[k + 6], S43, 2734768916);
+          b = _II(b, c, d, a, x[k + 13], S44, 1309151649);
+          a = _II(a, b, c, d, x[k + 4], S41, 4149444226);
+          d = _II(d, a, b, c, x[k + 11], S42, 3174756917);
+          c = _II(c, d, a, b, x[k + 2], S43, 718787259);
+          b = _II(b, c, d, a, x[k + 9], S44, 3951481745);
+          a = addUnsigned(a, AA);
+          b = addUnsigned(b, BB);
+          c = addUnsigned(c, CC);
+          d = addUnsigned(d, DD);
+        }
+        var temp = wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d);
+        return temp.toLowerCase();
+      }
+    };
+    return md5;
+  } ]);
+})(this, this.angular, void 0);;'use strict';
 
 /*
  * AngularJS Toaster
@@ -52560,7 +52759,724 @@ angular.module("template/typeahead/typeahead-popup.html", []).run(["$templateCac
     };
 
 }));
-;d3 = function() {
+;(function(angular, factory) {
+    'use strict';
+
+    if (typeof define === 'function' && define.amd) {
+        define(['angular'], function(angular) {
+            return factory(angular);
+        });
+    } else {
+        return factory(angular);
+    }
+}(angular || null, function(angular) {
+    'use strict';
+/**
+ * ngTable: Table + Angular JS
+ *
+ * @author Vitalii Savchuk <esvit666@gmail.com>
+ * @url https://github.com/esvit/ng-table/
+ * @license New BSD License <http://creativecommons.org/licenses/BSD/>
+ */
+
+/**
+ * @ngdoc module
+ * @name ngTable
+ * @description ngTable: Table + Angular JS
+ * @example
+ <doc:example>
+ <doc:source>
+ <script>
+ var app = angular.module('myApp', ['ngTable']);
+ app.controller('MyCtrl', function($scope) {
+                    $scope.users = [
+                        {name: "Moroni", age: 50},
+                        {name: "Tiancum", age: 43},
+                        {name: "Jacob", age: 27},
+                        {name: "Nephi", age: 29},
+                        {name: "Enos", age: 34}
+                    ];
+                });
+ </script>
+ <table ng-table class="table">
+ <tr ng-repeat="user in users">
+ <td data-title="'Name'">{{user.name}}</td>
+ <td data-title="'Age'">{{user.age}}</td>
+ </tr>
+ </table>
+ </doc:source>
+ </doc:example>
+ */
+var app = angular.module('ngTable', []);
+/**
+ * ngTable: Table + Angular JS
+ *
+ * @author Vitalii Savchuk <esvit666@gmail.com>
+ * @url https://github.com/esvit/ng-table/
+ * @license New BSD License <http://creativecommons.org/licenses/BSD/>
+ */
+
+/**
+ * @ngdoc service
+ * @name ngTable.factory:ngTableParams
+ * @description Parameters manager for ngTable
+ */
+app.factory('ngTableParams', ['$q', '$log', function ($q, $log) {
+    var isNumber = function (n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    };
+    var ngTableParams = function (baseParameters, baseSettings) {
+        var self = this,
+            log = function () {
+                if (settings.debugMode && $log.debug) {
+                    $log.debug.apply(this, arguments);
+                }
+            };
+
+        this.data = [];
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#parameters
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Set new parameters or get current parameters
+         *
+         * @param {string} newParameters      New parameters
+         * @param {string} parseParamsFromUrl Flag if parse parameters like in url
+         * @returns {Object} Current parameters or `this`
+         */
+        this.parameters = function (newParameters, parseParamsFromUrl) {
+            parseParamsFromUrl = parseParamsFromUrl || false;
+            if (angular.isDefined(newParameters)) {
+                for (var key in newParameters) {
+                    var value = newParameters[key];
+                    if (parseParamsFromUrl && key.indexOf('[') >= 0) {
+                        var keys = key.split(/\[(.*)\]/).reverse()
+                        var lastKey = '';
+                        for (var i = 0, len = keys.length; i < len; i++) {
+                            var name = keys[i];
+                            if (name !== '') {
+                                var v = value;
+                                value = {};
+                                value[lastKey = name] = (isNumber(v) ? parseFloat(v) : v);
+                            }
+                        }
+                        if (lastKey === 'sorting') {
+                            params[lastKey] = {};
+                        }
+                        params[lastKey] = angular.extend(params[lastKey] || {}, value[lastKey]);
+                    } else {
+                        params[key] = (isNumber(newParameters[key]) ? parseFloat(newParameters[key]) : newParameters[key]);
+                    }
+                }
+                log('ngTable: set parameters', params);
+                return this;
+            }
+            return params;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#settings
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Set new settings for table
+         *
+         * @param {string} newSettings New settings or undefined
+         * @returns {Object} Current settings or `this`
+         */
+        this.settings = function (newSettings) {
+            if (angular.isDefined(newSettings)) {
+                if (angular.isArray(newSettings.data)) {
+                    //auto-set the total from passed in data
+                    newSettings.total = newSettings.data.length;
+                }
+                settings = angular.extend(settings, newSettings);
+                log('ngTable: set settings', settings);
+                return this;
+            }
+            return settings;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#page
+         * @methodOf ngTable.factory:ngTableParams
+         * @description If parameter page not set return current page else set current page
+         *
+         * @param {string} page Page number
+         * @returns {Object|Number} Current page or `this`
+         */
+        this.page = function (page) {
+            return angular.isDefined(page) ? this.parameters({'page': page}) : params.page;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#total
+         * @methodOf ngTable.factory:ngTableParams
+         * @description If parameter total not set return current quantity else set quantity
+         *
+         * @param {string} total Total quantity of items
+         * @returns {Object|Number} Current page or `this`
+         */
+        this.total = function (total) {
+            return angular.isDefined(total) ? this.settings({'total': total}) : settings.total;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#count
+         * @methodOf ngTable.factory:ngTableParams
+         * @description If parameter count not set return current count per page else set count per page
+         *
+         * @param {string} count Count per number
+         * @returns {Object|Number} Count per page or `this`
+         */
+        this.count = function (count) {
+            // reset to first page because can be blank page
+            return angular.isDefined(count) ? this.parameters({'count': count, 'page': 1}) : params.count;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#filter
+         * @methodOf ngTable.factory:ngTableParams
+         * @description If parameter page not set return current filter else set current filter
+         *
+         * @param {string} filter New filter
+         * @returns {Object} Current filter or `this`
+         */
+        this.filter = function (filter) {
+            return angular.isDefined(filter) ? this.parameters({'filter': filter}) : params.filter;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#sorting
+         * @methodOf ngTable.factory:ngTableParams
+         * @description If 'sorting' parameter is not set, return current sorting. Otherwise set current sorting.
+         *
+         * @param {string} sorting New sorting
+         * @returns {Object} Current sorting or `this`
+         */
+        this.sorting = function (sorting) {
+            if (arguments.length == 2) {
+                var sortArray = {};
+                sortArray[sorting] = arguments[1];
+                this.parameters({'sorting': sortArray});
+                return this;
+            }
+            return angular.isDefined(sorting) ? this.parameters({'sorting': sorting}) : params.sorting;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#isSortBy
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Checks sort field
+         *
+         * @param {string} field     Field name
+         * @param {string} direction Direction of sorting 'asc' or 'desc'
+         * @returns {Array} Return true if field sorted by direction
+         */
+        this.isSortBy = function (field, direction) {
+            return angular.isDefined(params.sorting[field]) && params.sorting[field] == direction;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#orderBy
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Return object of sorting parameters for angular filter
+         *
+         * @returns {Array} Array like: [ '-name', '+age' ]
+         */
+        this.orderBy = function () {
+            var sorting = [];
+            for (var column in params.sorting) {
+                sorting.push((params.sorting[column] === "asc" ? "+" : "-") + column);
+            }
+            return sorting;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#getData
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Called when updated some of parameters for get new data
+         *
+         * @param {Object} $defer promise object
+         * @param {Object} params New parameters
+         */
+        this.getData = function ($defer, params) {
+            if (angular.isArray(this.data) && angular.isObject(params)) {
+                $defer.resolve(this.data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            } else {
+                $defer.resolve([]);
+            }
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#getGroups
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Return groups for table grouping
+         */
+        this.getGroups = function ($defer, column) {
+            var defer = $q.defer();
+
+            defer.promise.then(function (data) {
+                var groups = {};
+                angular.forEach(data, function (item) {
+                    var groupName = angular.isFunction(column) ? column(item) : item[column];
+
+                    groups[groupName] = groups[groupName] || {
+                        data: []
+                    };
+                    groups[groupName]['value'] = groupName;
+                    groups[groupName].data.push(item);
+                });
+                var result = [];
+                for (var i in groups) {
+                    result.push(groups[i]);
+                }
+                log('ngTable: refresh groups', result);
+                $defer.resolve(result);
+            });
+            this.getData(defer, self);
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#generatePagesArray
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Generate array of pages
+         *
+         * @param {boolean} currentPage which page must be active
+         * @param {boolean} totalItems  Total quantity of items
+         * @param {boolean} pageSize    Quantity of items on page
+         * @returns {Array} Array of pages
+         */
+        this.generatePagesArray = function (currentPage, totalItems, pageSize) {
+            var maxBlocks, maxPage, maxPivotPages, minPage, numPages, pages;
+            maxBlocks = 11;
+            pages = [];
+            numPages = Math.ceil(totalItems / pageSize);
+            if (numPages > 1) {
+                pages.push({
+                    type: 'prev',
+                    number: Math.max(1, currentPage - 1),
+                    active: currentPage > 1
+                });
+                pages.push({
+                    type: 'first',
+                    number: 1,
+                    active: currentPage > 1
+                });
+                maxPivotPages = Math.round((maxBlocks - 5) / 2);
+                minPage = Math.max(2, currentPage - maxPivotPages);
+                maxPage = Math.min(numPages - 1, currentPage + maxPivotPages * 2 - (currentPage - minPage));
+                minPage = Math.max(2, minPage - (maxPivotPages * 2 - (maxPage - minPage)));
+                var i = minPage;
+                while (i <= maxPage) {
+                    if ((i === minPage && i !== 2) || (i === maxPage && i !== numPages - 1)) {
+                        pages.push({
+                            type: 'more',
+                            active: false
+                        });
+                    } else {
+                        pages.push({
+                            type: 'page',
+                            number: i,
+                            active: currentPage !== i
+                        });
+                    }
+                    i++;
+                }
+                pages.push({
+                    type: 'last',
+                    number: numPages,
+                    active: currentPage !== numPages
+                });
+                pages.push({
+                    type: 'next',
+                    number: Math.min(numPages, currentPage + 1),
+                    active: currentPage < numPages
+                });
+            }
+            return pages;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#url
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Return groups for table grouping
+         *
+         * @param {boolean} asString flag indicates return array of string or object
+         * @returns {Array} If asString = true will be return array of url string parameters else key-value object
+         */
+        this.url = function (asString) {
+            asString = asString || false;
+            var pairs = (asString ? [] : {});
+            for (var key in params) {
+                if (params.hasOwnProperty(key)) {
+                    var item = params[key],
+                        name = encodeURIComponent(key);
+                    if (typeof item === "object") {
+                        for (var subkey in item) {
+                            if (!angular.isUndefined(item[subkey]) && item[subkey] !== "") {
+                                var pname = name + "[" + encodeURIComponent(subkey) + "]";
+                                if (asString) {
+                                    pairs.push(pname + "=" + item[subkey]);
+                                } else {
+                                    pairs[pname] = item[subkey];
+                                }
+                            }
+                        }
+                    } else if (!angular.isFunction(item) && !angular.isUndefined(item) && item !== "") {
+                        if (asString) {
+                            pairs.push(name + "=" + encodeURIComponent(item));
+                        } else {
+                            pairs[name] = encodeURIComponent(item);
+                        }
+                    }
+                }
+            }
+            return pairs;
+        };
+
+        /**
+         * @ngdoc method
+         * @name ngTable.factory:ngTableParams#reload
+         * @methodOf ngTable.factory:ngTableParams
+         * @description Reload table data
+         */
+        this.reload = function () {
+            var $defer = $q.defer(),
+                self = this;
+
+            settings.$loading = true;
+            if (settings.groupBy) {
+                settings.getGroups($defer, settings.groupBy, this);
+            } else {
+                settings.getData($defer, this);
+            }
+            log('ngTable: reload data');
+            $defer.promise.then(function (data) {
+                settings.$loading = false;
+                log('ngTable: current scope', settings.$scope);
+                if (settings.groupBy) {
+                    self.data = settings.$scope.$groups = data;
+                } else {
+                    self.data = settings.$scope.$data = data;
+                }
+                settings.$scope.pages = self.generatePagesArray(self.page(), self.total(), self.count());
+                settings.$scope.$emit('ngTableAfterReloadData');
+            });
+        };
+
+        this.reloadPages = function () {
+            var self = this;
+            settings.$scope.pages = self.generatePagesArray(self.page(), self.total(), self.count());
+        };
+
+        var params = this.$params = {
+            page: 1,
+            count: 1,
+            filter: {},
+            sorting: {},
+            group: {},
+            groupBy: null
+        };
+        var settings = {
+            $scope: null, // set by ngTable controller
+            $loading: false,
+            data: null, //allows data to be set when table is initialized
+            total: 0,
+            defaultSort: 'desc',
+            filterDelay: 750,
+            counts: [10, 25, 50, 100],
+            getGroups: this.getGroups,
+            getData: this.getData
+        };
+
+        this.settings(baseSettings);
+        this.parameters(baseParameters, true);
+        return this;
+    };
+    return ngTableParams;
+}]);
+
+/**
+ * ngTable: Table + Angular JS
+ *
+ * @author Vitalii Savchuk <esvit666@gmail.com>
+ * @url https://github.com/esvit/ng-table/
+ * @license New BSD License <http://creativecommons.org/licenses/BSD/>
+ */
+
+/**
+ * @ngdoc object
+ * @name ngTable.directive:ngTable.ngTableController
+ *
+ * @description
+ * Each {@link ngTable.directive:ngTable ngTable} directive creates an instance of `ngTableController`
+ */
+var ngTableController = ['$scope', 'ngTableParams', '$timeout', function ($scope, ngTableParams, $timeout) {
+    $scope.$loading = false;
+
+    if (!$scope.params) {
+        $scope.params = new ngTableParams();
+    }
+    $scope.params.settings().$scope = $scope;
+
+    var delayFilter = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            $timeout.cancel(timer);
+            timer = $timeout(callback, ms);
+        };
+    })();
+
+    $scope.$watch('params.$params', function (newParams, oldParams) {
+        $scope.params.settings().$scope = $scope;
+
+        if (!angular.equals(newParams.filter, oldParams.filter)) {
+            delayFilter(function () {
+                $scope.params.$params.page = 1;
+                $scope.params.reload();
+            }, $scope.params.settings().filterDelay);
+        } else {
+            $scope.params.reload();
+        }
+    }, true);
+
+    $scope.sortBy = function (column, event) {
+        var parsedSortable = $scope.parse(column.sortable);
+        if (!parsedSortable) {
+            return;
+        }
+        var defaultSort = $scope.params.settings().defaultSort;
+        var inverseSort = (defaultSort === 'asc' ? 'desc' : 'asc');
+        var sorting = $scope.params.sorting() && $scope.params.sorting()[parsedSortable] && ($scope.params.sorting()[parsedSortable] === defaultSort);
+        var sortingParams = (event.ctrlKey || event.metaKey) ? $scope.params.sorting() : {};
+        sortingParams[parsedSortable] = (sorting ? inverseSort : defaultSort);
+        $scope.params.parameters({
+            sorting: sortingParams
+        });
+    };
+}];
+/**
+ * ngTable: Table + Angular JS
+ *
+ * @author Vitalii Savchuk <esvit666@gmail.com>
+ * @url https://github.com/esvit/ng-table/
+ * @license New BSD License <http://creativecommons.org/licenses/BSD/>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngTable.directive:ngTable
+ * @restrict A
+ *
+ * @description
+ * Directive that instantiates {@link ngTable.directive:ngTable.ngTableController ngTableController}.
+ */
+app.directive('ngTable', ['$compile', '$q', '$parse',
+    function ($compile, $q, $parse) {
+        'use strict';
+
+        return {
+            restrict: 'A',
+            priority: 1001,
+            scope: true,
+            controller: ngTableController,
+            compile: function (element) {
+                var columns = [], i = 0, row = null;
+
+                // custom header
+                var thead = element.find('thead');
+
+                // IE 8 fix :not(.ng-table-group) selector
+                angular.forEach(angular.element(element.find('tr')), function (tr) {
+                    tr = angular.element(tr);
+                    if (!tr.hasClass('ng-table-group') && !row) {
+                        row = tr;
+                    }
+                });
+                if (!row) {
+                    return;
+                }
+                angular.forEach(row.find('td'), function (item) {
+                    var el = angular.element(item);
+                    if (el.attr('ignore-cell') && 'true' === el.attr('ignore-cell')) {
+                        return;
+                    }
+                    var parsedAttribute = function (attr, defaultValue) {
+                        return function (scope) {
+                            return $parse(el.attr('x-data-' + attr) || el.attr('data-' + attr) || el.attr(attr))(scope, {
+                                $columns: columns
+                            }) || defaultValue;
+                        };
+                    };
+
+                    var parsedTitle = parsedAttribute('title', ' '),
+                        headerTemplateURL = parsedAttribute('header', false),
+                        filter = parsedAttribute('filter', false)(),
+                        filterTemplateURL = false,
+                        filterName = false;
+
+                    if (filter && filter.$$name) {
+                        filterName = filter.$$name;
+                        delete filter.$$name;
+                    }
+                    if (filter && filter.templateURL) {
+                        filterTemplateURL = filter.templateURL;
+                        delete filter.templateURL;
+                    }
+
+                    el.attr('data-title-text', parsedTitle()); // this used in responsive table
+                    columns.push({
+                        id: i++,
+                        title: parsedTitle,
+                        sortable: parsedAttribute('sortable', false),
+                        'class': el.attr('x-data-header-class') || el.attr('data-header-class') || el.attr('header-class'),
+                        filter: filter,
+                        filterTemplateURL: filterTemplateURL,
+                        filterName: filterName,
+                        headerTemplateURL: headerTemplateURL,
+                        filterData: (el.attr("filter-data") ? el.attr("filter-data") : null),
+                        show: (el.attr("ng-show") ? function (scope) {
+                            return $parse(el.attr("ng-show"))(scope);
+                        } : function () {
+                            return true;
+                        })
+                    });
+                });
+                return function (scope, element, attrs) {
+                    scope.$loading = false;
+                    scope.$columns = columns;
+
+                    scope.$watch(attrs.ngTable, (function (params) {
+                        if (angular.isUndefined(params)) {
+                            return;
+                        }
+                        scope.paramsModel = $parse(attrs.ngTable);
+                        scope.params = params;
+                    }), true);
+                    scope.parse = function (text) {
+                        return angular.isDefined(text) ? text(scope) : '';
+                    };
+                    if (attrs.showFilter) {
+                        scope.$parent.$watch(attrs.showFilter, function (value) {
+                            scope.show_filter = value;
+                        });
+                    }
+                    angular.forEach(columns, function (column) {
+                        var def;
+                        if (!column.filterData) {
+                            return;
+                        }
+                        def = $parse(column.filterData)(scope, {
+                            $column: column
+                        });
+                        if (!(angular.isObject(def) && angular.isObject(def.promise))) {
+                            throw new Error('Function ' + column.filterData + ' must be instance of $q.defer()');
+                        }
+                        delete column.filterData;
+                        return def.promise.then(function (data) {
+                            if (!angular.isArray(data)) {
+                                data = [];
+                            }
+                            data.unshift({
+                                title: '-',
+                                id: ''
+                            });
+                            column.data = data;
+                        });
+                    });
+                    if (!element.hasClass('ng-table')) {
+                        scope.templates = {
+                            header: (attrs.templateHeader ? attrs.templateHeader : 'ng-table/header.html'),
+                            pagination: (attrs.templatePagination ? attrs.templatePagination : 'ng-table/pager.html')
+                        };
+                        var headerTemplate = thead.length > 0 ? thead : angular.element(document.createElement('thead')).attr('ng-include', 'templates.header');
+                        var paginationTemplate = angular.element(document.createElement('div')).attr({
+                            'ng-table-pagination': 'params',
+                            'template-url': 'templates.pagination'
+                        });
+
+                        element.find('thead').remove();
+
+                        element.addClass('ng-table')
+                            .prepend(headerTemplate)
+                            .after(paginationTemplate);
+
+                        $compile(headerTemplate)(scope);
+                        $compile(paginationTemplate)(scope);
+                    }
+                };
+            }
+        }
+    }
+]);
+
+/**
+ * ngTable: Table + Angular JS
+ *
+ * @author Vitalii Savchuk <esvit666@gmail.com>
+ * @url https://github.com/esvit/ng-table/
+ * @license New BSD License <http://creativecommons.org/licenses/BSD/>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngTable.directive:ngTablePagination
+ * @restrict A
+ */
+app.directive('ngTablePagination', ['$compile',
+    function ($compile) {
+        'use strict';
+
+        return {
+            restrict: 'A',
+            scope: {
+                'params': '=ngTablePagination',
+                'templateUrl': '='
+            },
+            replace: false,
+            link: function (scope, element, attrs) {
+
+                scope.params.settings().$scope.$on('ngTableAfterReloadData', function () {
+                    scope.pages = scope.params.generatePagesArray(scope.params.page(), scope.params.total(), scope.params.count());
+                }, true);
+
+                scope.$watch('templateUrl', function(templateUrl) {
+                    if (angular.isUndefined(templateUrl)) {
+                        return;
+                    }
+                    var template = angular.element(document.createElement('div'))
+                    template.attr({
+                        'ng-include': 'templateUrl'
+                    });
+                    element.append(template);
+                    $compile(template)(scope);
+                });
+            }
+        };
+    }
+]);
+
+angular.module('ngTable').run(['$templateCache', function ($templateCache) {
+	$templateCache.put('ng-table/filters/select-multiple.html', '<select ng-options="data.id as data.title for data in column.data" multiple ng-multiple="true" ng-model="params.filter()[name]" ng-show="filter==\'select-multiple\'" class="filter filter-select-multiple form-control" name="{{column.filterName}}"> </select>');
+	$templateCache.put('ng-table/filters/select.html', '<select ng-options="data.id as data.title for data in column.data" ng-model="params.filter()[name]" ng-show="filter==\'select\'" class="filter filter-select form-control" name="{{column.filterName}}"> </select>');
+	$templateCache.put('ng-table/filters/text.html', '<input type="text" name="{{column.filterName}}" ng-model="params.filter()[name]" ng-if="filter==\'text\'" class="input-filter form-control"/>');
+	$templateCache.put('ng-table/header.html', '<tr> <th ng-repeat="column in $columns" ng-class="{ \'sortable\': parse(column.sortable), \'sort-asc\': params.sorting()[parse(column.sortable)]==\'asc\', \'sort-desc\': params.sorting()[parse(column.sortable)]==\'desc\' }" ng-click="sortBy(column, $event)" ng-show="column.show(this)" ng-init="template=column.headerTemplateURL(this)" class="header {{column.class}}"> <div ng-if="!template" ng-show="!template" ng-bind="parse(column.title)"></div> <div ng-if="template" ng-show="template"><div ng-include="template"></div></div> </th> </tr> <tr ng-show="show_filter" class="ng-table-filters"> <th ng-repeat="column in $columns" ng-show="column.show(this)" class="filter"> <div ng-repeat="(name, filter) in column.filter"> <div ng-if="column.filterTemplateURL" ng-show="column.filterTemplateURL"> <div ng-include="column.filterTemplateURL"></div> </div> <div ng-if="!column.filterTemplateURL" ng-show="!column.filterTemplateURL"> <div ng-include="\'ng-table/filters/\' + filter + \'.html\'"></div> </div> </div> </th> </tr>');
+	$templateCache.put('ng-table/pager.html', '<div class="ng-cloak ng-table-pager"> <div ng-if="params.settings().counts.length" class="ng-table-counts btn-group pull-right"> <button ng-repeat="count in params.settings().counts" type="button" ng-class="{\'active\':params.count()==count}" ng-click="params.count(count)" class="btn btn-default"> <span ng-bind="count"></span> </button> </div> <ul class="pagination ng-table-pagination"> <li ng-class="{\'disabled\': !page.active}" ng-repeat="page in pages" ng-switch="page.type"> <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a> <a ng-switch-when="first" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="page" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="more" ng-click="params.page(page.number)" href="">&#8230;</a> <a ng-switch-when="last" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a> </li> </ul> </div> ');
+}]);
+    return app;
+}));;d3 = function() {
   var d3 = {
     version: "3.3.13"
   };
@@ -79704,7 +80620,12 @@ angular.module('adf')
 ;// Put your configuration in here.
 
 var SocialHarvestConfig = {
-	"apiHost": "http://localhost:3000"
+	//"apiHost": "http://localhost:3000",
+	"apiHost": "http://www.socialharvest.io:3000",
+	"bugsnag": {
+		"apiKey": "e387f83a1ba6727e9f55a8ea37713732",
+		"releaseStage": "development"
+	}
 };;/* *
  * The MIT License
  * 
@@ -79833,21 +80754,29 @@ var socialHarvestApp = angular.module('socialHarvest', [
   'socialHarvest.widgets.linklist',
   // 'socialHarvest.widgets.github',
   //
+  'socialHarvest.widgets.messages',
   'socialHarvest.widgets.gender',
   'socialHarvest.widgets.timeseriesLine',
-  // 
+  'socialHarvest.widgets.sharedLinksGrid',
+  //
+  'angular-md5',
   'angularMoment',
   'LocalStorageModule','structures',
   'territoryServices',
+  'utilityServices',
   'socialHarvest.territory',
-  'ngRoute', 'ngResource'
+  'ngTable',
+  'ngRoute', 'ngResource',
+  'exceptionOverride'
 ])
 .value('globals', {
   config : "social-harvest-dashboard-config.json"
 })
 .run(function($rootScope) {
+  // TODO: Load bugsnag from config. apply apiKey to Bugsnag.apiKey I believe it is... then follow instructions and make a service too that can be injected for manual calls that goes no where if no key.
   $rootScope.Config = {
-    "apiHost": "http://localhost:2345"
+    "apiHost": "http://localhost:2345",
+    "bugsnagApiKey": false
   };
   if(window.SocialHarvestConfig !== undefined) {
     $rootScope.Config = window.SocialHarvestConfig;
@@ -79855,6 +80784,9 @@ var socialHarvestApp = angular.module('socialHarvest', [
   // Default dates
   $rootScope.dateFrom = moment().subtract(29, 'days').format('YYYY-MM-DD');
   $rootScope.dateTo = moment().format('YYYY-MM-DD');
+  //
+  // temp
+  $rootScope.territoryName = "";
 })
 .config(function($routeProvider, localStorageServiceProvider){
   localStorageServiceProvider.setPrefix('adf');
@@ -79864,8 +80796,7 @@ var socialHarvestApp = angular.module('socialHarvest', [
     controller: 'territoryDashboardCtrl'
   })
   .when('/', {
-    templateUrl: 'templates/home.html',
-    controller: 'homeController'
+    templateUrl: 'templates/home.html'
   })
   .otherwise({
     redirectTo: '/'
@@ -79908,7 +80839,7 @@ var socialHarvestApp = angular.module('socialHarvest', [
 .controller('HomeController', function($scope, $location, TerritoryIndex){
   // The homeController is responsible for everything dealing with the landing page of Social Harvest.
   // It should include links to territories, overviews, and other various acitons.
-  
+
   // Initial territory listing on page load
   TerritoryIndex.get({q: $scope.q}, function(u, getResponseHeaders) {
     if(u._meta.success === true) {
@@ -79920,7 +80851,102 @@ var socialHarvestApp = angular.module('socialHarvest', [
     var currentRoute = $location.path().substring(1) || 'Social Harvest';
     return page === currentRoute || new RegExp(page).test(currentRoute) ? 'active' : '';
   };
+})
+.filter('truncate', function () {
+    /**
+     * Truncate Filter
+     * @Param text
+     * @Param length, default is 10
+     * @Param end, default is "..."
+     * @return string
+    */
+    return function (text, length, end) {
+        if (isNaN(length))
+            length = 10;
+
+        if (end === undefined)
+            end = "...";
+
+        if (text.length <= length || text.length - end.length <= length) {
+            return text;
+        }
+        else {
+            return String(text).substring(0, length-end.length) + end;
+        }
+
+    };
+})
+.filter('urlsAndTags', function() {
+    var urls = /(\b(https?|ftp):\/\/[A-Z0-9+&@#\/%?=~_|!:,.;-]*[-A-Z0-9+&@#\/%=~_|])/gim;
+    var emails = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
+    var hashTags = /\#([A-Z0-9\_\-]+)/gim;
+    var userHandle = /\@([A-Z0-9\_]{1,15})/gim;
+
+    return function(text, network) {
+        if(text.match(urls)) {
+            text = text.replace(urls, "<a href=\"$1\" target=\"_blank\">$1</a>");
+        }
+        if(text.match(emails)) {
+            text = text.replace(emails, "<a href=\"mailto:$1\">$1</a>");
+        }
+        if(text.match(hashTags)) {
+            text = text.replace(hashTags, "<a href=\"https://twitter.com/search?q=%23$1\" target=\"_blank\">#$1</a>");
+        }
+        if(text.match(userHandle)) {
+          
+          if(network !== undefined) {
+            switch(network) {
+              case "twitter":
+                text = text.replace(userHandle, "<a href=\"https://twitter.com/$1\" target=\"_blank\">@$1</a>");
+                break;
+              case "vine":
+                break;
+              default:
+                break;
+            }
+          }
+        }
+
+        return text       
+    };
 });
+
+// Bugsnag, if configured (and if the Bugsnag notifier has been included on the page).
+angular.module('exceptionOverride', []).factory('$exceptionHandler', ['$log', '$window', function ($log, $window) {
+  return function (exception, cause) {
+    // Still log to console.
+    $log.error.apply($log);
+    // Also to Bugsnag if, in the least, the API key is set in config.js.
+    if(Bugsnag !== undefined && $window.SocialHarvestConfig !== undefined && $window.SocialHarvestConfig.bugsnag !== undefined) {
+      Bugsnag.apiKey = $window.SocialHarvestConfig.bugsnag.apiKey;
+      if($window.SocialHarvestConfig.bugsnag.appVersion !== undefined) {
+        Bugsnag.appVersion = $window.SocialHarvestConfig.bugsnag.appVersion;
+      }
+      if($window.SocialHarvestConfig.bugsnag.metaData !== undefined) {
+        Bugsnag.metaData = $window.SocialHarvestConfig.bugsnag.metaData;
+      }
+      if($window.SocialHarvestConfig.bugsnag.releaseStage !== undefined) {
+        Bugsnag.releaseStage = $window.SocialHarvestConfig.bugsnag.releaseStage;
+      }
+      if($window.SocialHarvestConfig.bugsnag.autoNotify !== undefined) {
+        Bugsnag.autoNotify = $window.SocialHarvestConfig.bugsnag.autoNotify;
+      }
+      if($window.SocialHarvestConfig.bugsnag.projectRoot !== undefined) {
+        Bugsnag.projectRoot = $window.SocialHarvestConfig.bugsnag.projectRoot;
+      }
+      if (angular.isString(exception)) {
+        Bugsnag.notify(exception);
+      } else {
+        Bugsnag.notifyException(exception, {diagnostics:{cause: cause}});
+      }
+    }
+  }($window);
+}]).run(['$location', function($location) {
+  // Make sure Bugsnag knows about the location as it pertains to AngularJS.
+  if(Bugsnag !== undefined) {
+    Bugsnag.context = $location.url();
+  }
+}]);
 
 // The date range picker is not in AngularJS (for now)
 $(document).ready(function() {
@@ -79971,9 +80997,18 @@ angular.module('territoryServices', ['ngResource'])
       });
     }
   ])
+  .factory('TerritoryMessages', ['$resource', '$http', '$rootScope',
+    function($resource, $http, $rootScope) {
+      return $resource($rootScope.Config.apiHost + '/territory/messages/:territory', {from: "@date", to: "@date", network: "", limit: "", skip: "", lang: "", country: "", geohash: "", gender: "", questions: "", search: ""}, {
+        get: {
+          method: 'GET'
+        }
+      });
+    }
+  ])
   .factory('TerritoryAggregate', ['$resource', '$http', '$rootScope',
     function($resource, $http, $rootScope) {
-      return $resource($rootScope.Config.apiHost + '/territory/aggregate/:territory/:series', {from: "@date", to: "@date", fields: "", network: ""}, {
+      return $resource($rootScope.Config.apiHost + '/territory/aggregate/:territory/:series', {from: "@date", to: "@date", fields: "", network: "", limit: ""}, {
         get: {
           method: 'GET'
         }
@@ -80028,10 +81063,39 @@ angular.module('territoryServices', ['ngResource'])
 //     You should have received a copy of the GNU General Public License
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+angular.module('utilityServices', ['ngResource'])
+  .factory('LinkDetails', ['$resource', '$http', '$rootScope',
+    function($resource, $http, $rootScope) {
+      return $resource($rootScope.Config.apiHost + '/link/details', {url: ""}, {
+        get: {
+          method: 'GET'
+        }
+      });
+    }
+  ]);;// Social Harvest is a social media analytics platform.
+//     Copyright (C) 2014 Tom Maiaroto, Shift8Creative, LLC (http://www.socialharvest.io)
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 'use strict';
 
 angular.module('socialHarvest.territory', ['adf', 'LocalStorageModule'])
-.controller('territoryDashboardCtrl', function($scope, localStorageService){
+.controller('territoryDashboardCtrl', function($scope, $location, $route, $rootScope, localStorageService){
+  if($route.current.params.territoryName === undefined || $route.current.params.territoryName === "") {
+    $location.path("/");
+  }
+  $rootScope.territoryName = $route.current.params.territoryName;
 
   var name = 'territory-dashboard';
   var model = localStorageService.get(name);
@@ -80084,7 +81148,7 @@ angular.module('socialHarvest.territory', ['adf', 'LocalStorageModule'])
       }, {
           styleClass: "col-md-8",
           widgets: [{
-            type: "randommsg",
+            type: "messages",
             config: {
                 collapsible: true,
                 maximizable: true,
@@ -80110,11 +81174,115 @@ angular.module('socialHarvest.territory', ['adf', 'LocalStorageModule'])
   $scope.model = model;
   $scope.collapsible = false;
 
+
   $scope.$on('adfDashboardChanged', function (event, name, model) {
     localStorageService.set(name, model);
   });
 });
 ;// Social Harvest is a social media analytics platform.
+//     Copyright (C) 2014 Tom Maiaroto, Shift8Creative, LLC (http://www.socialharvest.io)
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+'use strict';
+
+angular.module('socialHarvest.widgets.messages', ['adf.provider', 'ngTable'])
+  .config(function(dashboardProvider){
+    dashboardProvider
+      .widget('messages', {
+        title: 'Messages',
+        description: 'A table listing of messages with pagination',
+        templateUrl: 'scripts/widgets/messages/messages.html',
+        controller: 'MessagesCtrl',
+        reload: true,
+        edit: {
+          templateUrl: 'scripts/widgets/messages/edit.html'
+        }
+      });
+  })
+  .controller('MessagesCtrl', function($scope, $rootScope, $timeout, config, ngTableParams, TerritoryMessages){
+    $scope.messages = [];
+    $scope.messagesTotal = 0;
+    var updateLock = false;
+
+    $scope.questions = "";
+    if(config.questions === undefined) {
+      $scope.questions = "";
+    }
+    if(config.questions === true) {
+      $scope.questions = "1";
+    }
+
+    $scope.messageSearch = "";
+    $scope.tableParams = new ngTableParams({
+      from: $rootScope.dateFrom,
+      to: $rootScope.dateTo,
+      questions: $scope.questions,
+      search: $scope.messageSearch,
+      page: 1, // show first page
+      count: 10 // count per page
+    }, {
+      total: 0,
+      getData: function($defer, params) {
+        console.dir(params)
+          TerritoryMessages.get({territory: $rootScope.territoryName, limit: params.$params.count, skip: ((params.$params.page - 1) * params.$params.count), search: params.$params.search, questions: params.$params.questions, from: params.$params.dateFrom, to: params.$params.dateTo}, function(u, getResponseHeaders) {
+            if(u._meta.success === true) {
+              $scope.messagesTotal = u._data.total;
+              $scope.messages = u._data.messages;
+
+              params.total(u._data.total);
+              $defer.resolve(u._data.messages);
+
+            }
+            console.dir($scope.messages);
+          });
+      }
+    });
+    
+    // Watch $scope.messageSearch and if the text entered by the user was more than three characters, update the search parameter.
+    var tempFilterText = '',
+        filterTextTimeout;
+    $scope.$watch('messageSearch', function(newVal, oldVal) {
+      if(newVal !== oldVal) {
+          if (filterTextTimeout) $timeout.cancel(filterTextTimeout);
+
+          tempFilterText = newVal;
+          filterTextTimeout = $timeout(function() {
+              $scope.filterText = tempFilterText;
+              $scope.tableParams.$params.search = newVal;
+          }, 500); // delay 500 ms
+      }
+    });
+
+    // If the date range changes, re-load. Will $watchCollection work here? Not sure...I still think that fires twice because the values change one after the other.
+    // So implementing a lock here too.
+    $rootScope.$watch('dateTo', function(newVal, oldVal) {
+      if(newVal !== oldVal) {
+        if(!updateLock) {
+          $scope.getMessages();
+        }
+      }
+    });
+    $rootScope.$watch('dateFrom', function(newVal, oldVal) {
+      if(newVal !== oldVal) {
+        if(!updateLock) {
+          $scope.getMessages();
+        }
+      }
+    });
+
+  });;// Social Harvest is a social media analytics platform.
 //     Copyright (C) 2014 Tom Maiaroto, Shift8Creative, LLC (http://www.socialharvest.io)
 //
 //     This program is free software: you can redistribute it and/or modify
@@ -80155,7 +81323,7 @@ angular.module('socialHarvest.widgets.gender', ['adf.provider'])
     };
 
     $scope.aggregateGender = function(){
-      TerritoryAggregate.get({territory: "javascript", series: "messages", fields: "contributor_gender", from: $rootScope.dateFrom, to: $rootScope.dateTo}, function(u, getResponseHeaders) {
+      TerritoryAggregate.get({territory: $rootScope.territoryName, series: "messages", fields: "contributor_gender", from: $rootScope.dateFrom, to: $rootScope.dateTo}, function(u, getResponseHeaders) {
         if(u._meta.success === true) {
           $scope.TerritoryGender.aggregateTotal = u._data.total;
           for(x in u._data.aggregate[0].counts.contributor_gender) {
@@ -80249,7 +81417,7 @@ angular.module('socialHarvest.widgets.timeseriesLine', ['adf.provider', 'nvd3Cha
       };
 
       TerritoryTimeseriesCount.stream({
-        territory: "javascript",
+        territory: $rootScope.territoryName,
         series: "messages",
         field: "*",
         fieldValue: "",
@@ -80320,6 +81488,83 @@ angular.module('socialHarvest.widgets.timeseriesLine', ['adf.provider', 'nvd3Cha
       if(newVal !== oldVal) {
         if(!updateLock) {
           $scope.countTimeseries();
+        }
+      }
+    });
+
+  });;// Social Harvest is a social media analytics platform.
+//     Copyright (C) 2014 Tom Maiaroto, Shift8Creative, LLC (http://www.socialharvest.io)
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+'use strict';
+
+angular.module('socialHarvest.widgets.sharedLinksGrid', ['adf.provider', 'angular-md5'])
+  .config(function(dashboardProvider){
+    dashboardProvider
+      .widget('shared-links-grid', {
+        title: 'Shared Links Grid',
+        description: 'Shows a grid of thumbnails for shared links or media',
+        templateUrl: 'scripts/widgets/shared-links-grid/shared-links-grid.html',
+        controller: 'SharedLinksCtrl',
+        reload: true,
+        edit: {
+          templateUrl: 'scripts/widgets/shared-links-grid/edit.html'
+        }
+      });
+  })
+  .controller('SharedLinksCtrl', function($scope, $rootScope, config, md5, TerritoryAggregate){
+    $scope.sortedLinks = [];
+    $scope.sortedLinksTotal = 0;
+    $scope.linkDetails = {};
+    var updateLock = false;
+
+    // TODO: config for the series. either shared_links or shared_media
+    // config for limit too. by default do 25. who wants to scroll past a grid of 25 images? top10 might even be enough. maybe a list... maybe paginated... TODO: Paginated API method.
+    // maybe an option to list a table list beneath the grid for other urls?
+    $scope.aggregateSharedLinks = function(){
+      updateLock = true;
+      TerritoryAggregate.get({territory: $rootScope.territoryName, series: "shared_links", fields: "expanded_url", limit: 50, from: $rootScope.dateFrom, to: $rootScope.dateTo}, function(u, getResponseHeaders) {
+        if(u._meta.success === true) {
+          $scope.sortedLinksTotal = u._data.total;
+          for(x in u._data.aggregate[0].counts.expanded_url) {
+            $scope.linkDetails[md5.createHash(u._data.aggregate[0].counts.expanded_url[x].value)] = {};
+            $scope.sortedLinks.push([u._data.aggregate[0].counts.expanded_url[x].value, u._data.aggregate[0].counts.expanded_url[x].count]);
+          }
+          $scope.sortedLinks.sort(function(a, b) {return b[1] - a[1]});
+        }
+        updateLock = false;
+        console.dir($scope.sortedLinks);
+      });
+    };
+
+    // Initial load.
+    $scope.aggregateSharedLinks();
+
+    // If the date range changes, re-load. Will $watchCollection work here? Not sure...I still think that fires twice because the values change one after the other.
+    // So implementing a lock here too.
+    $rootScope.$watch('dateTo', function(newVal, oldVal) {
+      if(newVal !== oldVal) {
+        if(!updateLock) {
+          $scope.aggregateSharedLinks();
+        }
+      }
+    });
+    $rootScope.$watch('dateFrom', function(newVal, oldVal) {
+      if(newVal !== oldVal) {
+        if(!updateLock) {
+          $scope.aggregateSharedLinks();
         }
       }
     });

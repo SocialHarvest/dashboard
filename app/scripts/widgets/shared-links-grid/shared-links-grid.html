@@ -1,0 +1,13 @@
+<div class="text-center">
+  <div class="alert alert-info" ng-if="!sortedLinks">
+    No data found
+  </div>
+  <div>
+  	<ul class="shared-links-grid" ng-repeat="link in sortedLinks">
+  		<li><a href="{{link[0]}}" target="_blank">
+  			seen {{link[1]}} times<br />{{link[0]}}
+  		</a></li>
+  	</ul>
+  </div>
+  foo
+</div>

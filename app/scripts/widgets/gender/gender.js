@@ -39,7 +39,7 @@ angular.module('socialHarvest.widgets.gender', ['adf.provider'])
     };
 
     $scope.aggregateGender = function(){
-      TerritoryAggregate.get({territory: "javascript", series: "messages", fields: "contributor_gender", from: $rootScope.dateFrom, to: $rootScope.dateTo}, function(u, getResponseHeaders) {
+      TerritoryAggregate.get({territory: $rootScope.territoryName, series: "messages", fields: "contributor_gender", from: $rootScope.dateFrom, to: $rootScope.dateTo}, function(u, getResponseHeaders) {
         if(u._meta.success === true) {
           $scope.TerritoryGender.aggregateTotal = u._data.total;
           for(x in u._data.aggregate[0].counts.contributor_gender) {

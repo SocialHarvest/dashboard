@@ -17,7 +17,11 @@
 'use strict';
 
 angular.module('socialHarvest.territory', ['adf', 'LocalStorageModule'])
-.controller('territoryDashboardCtrl', function($scope, localStorageService){
+.controller('territoryDashboardCtrl', function($scope, $location, $route, $rootScope, localStorageService){
+  if($route.current.params.territoryName === undefined || $route.current.params.territoryName === "") {
+    $location.path("/");
+  }
+  $rootScope.territoryName = $route.current.params.territoryName;
 
   var name = 'territory-dashboard';
   var model = localStorageService.get(name);
@@ -70,7 +74,7 @@ angular.module('socialHarvest.territory', ['adf', 'LocalStorageModule'])
       }, {
           styleClass: "col-md-8",
           widgets: [{
-            type: "randommsg",
+            type: "messages",
             config: {
                 collapsible: true,
                 maximizable: true,
@@ -95,6 +99,7 @@ angular.module('socialHarvest.territory', ['adf', 'LocalStorageModule'])
   $scope.name = name;
   $scope.model = model;
   $scope.collapsible = false;
+
 
   $scope.$on('adfDashboardChanged', function (event, name, model) {
     localStorageService.set(name, model);

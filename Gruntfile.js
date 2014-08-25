@@ -100,8 +100,11 @@ module.exports = function(grunt) {
           'bower_components/pure/pure-min.css',
           'bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css',
           'bower_components/nvd3/nv.d3.css',
+          'bower_components/ng-table/ng-table.css',
+          'app/scripts/widgets/messages/messages.css',
           'app/scripts/widgets/gender/gender.css',
           'app/scripts/widgets/timeseries-line/line.css',
+          'app/scripts/widgets/shared-links-grid/shared-links-grid.css',
           'app/styles/app.css',
         ]
       },
@@ -129,11 +132,15 @@ module.exports = function(grunt) {
           'bower_components/showdown/compressed/extensions/twitter.js',
           'bower_components/angular-markdown-directive/markdown.js',
           'bower_components/angular-local-storage/angular-local-storage.js',
+          'bower_components/angular-md5/angular-md5.js',
           'bower_components/AngularJS-Toaster/toaster.js',
           'bower_components/angular-moment/angular-moment.js',
           'bower_components/angular-bootstrap/ui-bootstrap.js',
           'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
           'bower_components/bootstrap-daterangepicker/daterangepicker.js',
+          // ng-table-export had some sort of problem (and it's ok because it would only expert what was visible in the table and not all items - so we won't use this for now)
+          // 'bower_components/ng-table-export/ng-table-export.js',
+          'bower_components/ng-table/ng-table.js',
 
           'bower_components/d3/d3.js',
           'bower_components/nvd3/nv.d3.js',
@@ -152,12 +159,15 @@ module.exports = function(grunt) {
           'app/scripts/structures.js',
           'app/scripts/socialHarvest.js',
           'app/scripts/services/territory.js',
+          'app/scripts/services/util.js',
           'app/scripts/territory.js',
           // 'app/scripts/sample-01.js', // just left as an example dashboard for reference - not in use
 
           // Widgets
+          'app/scripts/widgets/messages/messages.js',
           'app/scripts/widgets/gender/gender.js',
           'app/scripts/widgets/timeseries-line/timeseries-line.js',
+          'app/scripts/widgets/shared-links-grid/shared-links-grid.js',
           // Example widgets
           'app/scripts/widgets/news/news.js',
           'app/scripts/widgets/weather/weather.js',

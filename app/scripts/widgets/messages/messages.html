@@ -1,0 +1,55 @@
+<div>
+	<div class="alert alert-info" ng-if="!messages">
+   		No data found
+	</div>
+	
+	
+	<div class="input-group input-group-sm">
+		<input class="form-control" type="text" ng-model="messageSearch" placeholder="search..." />
+		<span class="input-group-addon"><i class="fa fa-search"></i></span>
+	</div>
+	
+	<table ng-table="tableParams" class="table ng-table-responsive">
+	    <tr ng-repeat="msg in $data">
+	    	<!-- <td data-title="'Time'" header-class="text-left" sortable="'time'"> -->
+	    	<td>
+				<span class="black">{{msg.time | date:'medium'}}</span>
+
+				<span ng-switch="msg.network">
+					<span ng-switch-when="facebook"><i class="fa fa-facebook"></i></span>
+					<span ng-switch-when="twitter"><i class="fa fa-twitter"></i></span>
+					<span ng-switch-when="instagram"><i class="fa fa-instagram"></i></span>
+				</span>			
+
+				<!-- This would be great, but missing images often turn up. Twitter requires auth to get profile pictures. When front-end auth is enabled we'll add this in. Annoying.
+				<span ng-switch="msg.network">
+					<span ng-switch-when="twitter"><img class="messages-widget-profile-picture" src="http://avatars.io/twitter/{{msg.contributor_id}}" /></span>
+					<span ng-switch-when="facebook"><img class="messages-widget-profile-picture" src="https://graph.facebook.com/{{msg.contributor_id}}/picture" /></span>
+					<span ng-switch-when="instagram"><img class="messages-widget-profile-picture" src="http://avatars.io/instagram/{{msg.contributor_id}}" /></span>
+				</span>
+				-->
+
+				<span ng-switch="msg.contributor_gender">
+					<span ng-switch-when="-1"><i class="fa fa-female messages-widget-female-icon"></i></span>
+					<span ng-switch-when="1"><i class="fa fa-male messages-widget-male-icon"></i></span>
+					<span ng-switch-default><i class="fa fa-question messages-widget-unknown-icon"></i></span>
+				</span>
+
+				<span class="messages-widget-contributor-link" ng-switch="msg.network">
+					<a ng-switch-when="facebook" href="http://www.facebook.com/{{msg.contributor_id}}" target="_blank"><em class="gray">{{msg.contributor_screen_name}}</em></a>
+					<a ng-switch-when="twitter" href="http://www.twitter.com/{{msg.contributor_screen_name}}" target="_blank"><em class="gray">{{msg.contributor_screen_name}}</em></a>
+				</span>
+				
+
+				<span class="messages-widget-link-out" ng-switch="msg.network">
+					<a ng-switch-when="facebook" href="http://www.facebook.com/{{msg.message_id}}" target="_blank"><i class="fa fa-external-link"></i></a>
+					<a ng-switch-when="twitter" href="http://www.twitter.com/{{msg.contributor_screen_name}}/status/{{msg.message_id}}" target="_blank"><i class="fa fa-external-link"></i></a>
+				</span>
+
+				<div class="messages-widget-message-body" ng-bind-html="msg.message|truncate:250|urlsAndTags:msg.network">
+					{{msg.message|truncate:250|urlsAndTags:msg.network}}
+				</div>
+	    	</td>
+	    </tr>
+	</table>
+</div>
