@@ -110,7 +110,7 @@ module.exports = function(grunt) {
       },
       scripts: {
         options: {
-          separator: ';'
+          separator: ";\n"
         },
         dest: './app/assets/app.js',
         src: [
